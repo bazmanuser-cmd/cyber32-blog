@@ -74,8 +74,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Cyber32 | تیم امنیت سایبری و هک" },
       { name: "twitter:description", content: "بلاگ رسمی تیم سایبر ۳۲ — هک، امنیت، کانفیگ، دیتابیس، سورس کد و آموزش." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/97973af8-2651-4743-9de5-9844c0b4f2f5" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/97973af8-2651-4743-9de5-9844c0b4f2f5" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/NQcmXyNEP8dgUqP4c2fZPsPYeKF3/social-images/social-1783181581540-photo_5908738641603792287_c.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/NQcmXyNEP8dgUqP4c2fZPsPYeKF3/social-images/social-1783181581540-photo_5908738641603792287_c.webp" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
