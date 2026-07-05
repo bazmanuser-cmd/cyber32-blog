@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { TEAM_ROSTER } from "@/lib/team";
+import { getMediaDisplayUrl } from "@/lib/media";
 
 export const SHARED_PASSWORD = "avesta27cret88";
 
@@ -8,7 +10,11 @@ export type Profile = {
   id: string;
   username: string;
   display_name: string | null;
+  role_title: string | null;
   avatar_url: string | null;
+  avatar_path: string | null;
+  banner_url: string | null;
+  banner_path: string | null;
   bio: string | null;
 };
 
@@ -32,6 +38,8 @@ function usernameToEmail(username: string) {
   return `${username}@cyber32.local`;
 }
 
+const ALLOWED_USERNAMES = new Set(TEAM_ROSTER.map((member) => member.username.toLowerCase()));
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -40,10 +48,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loadProfile = async (userId: string) => {
     const { data } = await supabase
       .from("profiles")
-      .select("id, username, display_name, avatar_url, bio")
+      .select("id, username, display_name, role_title, avatar_url, avatar_path, banner_url, banner_path, bio")
       .eq("id", userId)
       .maybeSingle();
-    setProfile(data ?? null);
+    if (!data) {
+      setProfile(null);
+      return;
+    }
+    const [avatarUrl, bannerUrl] = await Promise.all([
+      getMediaDisplayUrl(data.avatar_path, data.avatar_url),
+      getMediaDisplayUrl(data.banner_path, data.banner_url),
+    ]);
+    setProfile({ ...data, avatar_url: avatarUrl, banner_url: bannerUrl });
   };
 
   useEffect(() => {
@@ -66,24 +82,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = async (rawUsername: string, password: string) => {
     const username = normalizeUsername(rawUsername);
     if (!username) return { error: "نام کاربری الزامی است" };
-    if (password !== SHARED_PASSWORD) return { error: "رمز عبور اشتباه است" };
+    if (!ALLOWED_USERNAMES.has(username)) {
+      return { error: "این نام کاربری در فهرست اعضای سایبر ۳۲ تعریف نشده است" };
+    }
+    if (!password) return { error: "رمز عبور الزامی است" };
 
     const email = usernameToEmail(username);
 
-    // Try sign in first
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
-      password: SHARED_PASSWORD,
+      password,
     });
 
     if (!signInError) return {};
 
-    // If user doesn't exist, sign up
+    if (password !== SHARED_PASSWORD) {
+      return { error: "رمز عبور اشتباه است" };
+    }
+
+    const member = TEAM_ROSTER.find((item) => item.username.toLowerCase() === username);
+
     const { error: signUpError } = await supabase.auth.signUp({
       email,
       password: SHARED_PASSWORD,
       options: {
-        data: { username, display_name: username },
+        data: {
+          username,
+          display_name: member?.displayName ?? username,
+          role_title: member?.role ?? null,
+        },
         emailRedirectTo: `${window.location.origin}/`,
       },
     });
@@ -92,7 +119,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: signUpError.message };
     }
 
-    // Sign in after signup
     const { error: retryError } = await supabase.auth.signInWithPassword({
       email,
       password: SHARED_PASSWORD,
