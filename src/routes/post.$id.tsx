@@ -2,11 +2,13 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { getMediaDisplayUrl } from "@/lib/media";
+import { sanitizeRichText } from "@/lib/rich-text";
 import { Layout } from "@/components/Layout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Calendar, User, Edit3, Trash2 } from "lucide-react";
+import { ArrowRight, Calendar, User, Edit3, Trash2, Eye } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/post/$id")({ component: PostPage });
@@ -15,12 +17,20 @@ type Post = {
   id: string;
   title: string;
   content: string;
+  excerpt: string | null;
   category: string | null;
   media_url: string | null;
+  media_path: string | null;
+  media_name: string | null;
+  media_size: number | null;
   media_type: string | null;
+  tags: string[];
+  view_count: number;
   created_at: string;
   author_id: string;
-  profiles: { username: string; display_name: string | null; avatar_url: string | null; bio: string | null } | null;
+  profiles: { username: string; display_name: string | null; avatar_url: string | null; avatar_path: string | null; bio: string | null; role_title: string | null } | null;
+  display_media_url?: string | null;
+  display_avatar_url?: string | null;
 };
 
 function PostPage() {
@@ -34,10 +44,20 @@ function PostPage() {
     (async () => {
       const { data } = await supabase
         .from("posts")
-        .select("*, profiles:author_id(username, display_name, avatar_url, bio)")
+        .select("*, profiles:author_id(username, display_name, avatar_url, avatar_path, bio, role_title)")
         .eq("id", id)
         .maybeSingle();
-      setPost(data as any);
+      if (data) {
+        const post = data as unknown as Post;
+        const [mediaUrl, avatarUrl] = await Promise.all([
+          getMediaDisplayUrl(post.media_path, post.media_url),
+          getMediaDisplayUrl(post.profiles?.avatar_path, post.profiles?.avatar_url),
+        ]);
+        setPost({ ...post, display_media_url: mediaUrl, display_avatar_url: avatarUrl });
+        await supabase.from("posts").update({ view_count: (post.view_count ?? 0) + 1 }).eq("id", id);
+      } else {
+        setPost(null);
+      }
       setLoading(false);
     })();
   }, [id]);
@@ -52,7 +72,7 @@ function PostPage() {
   if (loading) return <Layout><div className="p-20 text-center font-mono text-muted-foreground">&gt; در حال بارگذاری...</div></Layout>;
   if (!post) return <Layout><div className="p-20 text-center">پست یافت نشد.</div></Layout>;
 
-  const isAuthor = user?.id === post.author_id;
+  const canManage = Boolean(user);
 
   return (
     <Layout>
@@ -70,8 +90,8 @@ function PostPage() {
 
         <div className="mt-6 flex items-center justify-between border-y border-border/50 py-4">
           <div className="flex items-center gap-3">
-            {post.profiles?.avatar_url ? (
-              <img src={post.profiles.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover border border-primary/30" />
+            {post.display_avatar_url ? (
+              <img src={post.display_avatar_url} alt="" className="w-10 h-10 rounded-full object-cover border border-primary/30" />
             ) : (
               <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
                 <User className="w-5 h-5 text-muted-foreground" />
@@ -89,7 +109,7 @@ function PostPage() {
               </div>
             </div>
           </div>
-          {isAuthor && (
+          {canManage && (
             <div className="flex gap-2">
               <Button size="sm" variant="outline" onClick={() => navigate({ to: "/admin" })}>
                 <Edit3 className="w-3.5 h-3.5" /> ویرایش
@@ -101,22 +121,25 @@ function PostPage() {
           )}
         </div>
 
-        {post.media_url && post.media_type?.startsWith("image") && (
-          <img src={post.media_url} alt={post.title} className="w-full rounded-lg mt-8 border border-border" />
+        <div className="mt-4 flex flex-wrap gap-2">
+          {(post.tags ?? []).map((tag) => <span key={tag} className="text-xs font-mono text-primary">#{tag}</span>)}
+          <span className="text-xs text-muted-foreground font-mono flex items-center gap-1"><Eye className="w-3 h-3" /> {post.view_count}</span>
+        </div>
+
+        {post.display_media_url && post.media_type?.startsWith("image") && (
+          <img src={post.display_media_url} alt={post.title} className="w-full rounded-lg mt-8 border border-border" />
         )}
-        {post.media_url && post.media_type?.startsWith("video") && (
-          <video src={post.media_url} controls className="w-full rounded-lg mt-8 border border-border" />
+        {post.display_media_url && post.media_type?.startsWith("video") && (
+          <video src={post.display_media_url} controls className="w-full rounded-lg mt-8 border border-border" />
         )}
 
-        <div className="mt-8 prose prose-invert max-w-none text-lg leading-relaxed whitespace-pre-wrap">
-          {post.content}
-        </div>
+        <div className="mt-8 rich-content text-lg" dangerouslySetInnerHTML={{ __html: sanitizeRichText(post.content) }} />
 
         <Card className="mt-12 p-5 bg-card/50 border-primary/20">
           <div className="text-xs font-mono text-primary mb-2">// SIGNED_BY</div>
           <div className="flex items-center gap-3">
-            {post.profiles?.avatar_url ? (
-              <img src={post.profiles.avatar_url} alt="" className="w-12 h-12 rounded-full object-cover" />
+            {post.display_avatar_url ? (
+              <img src={post.display_avatar_url} alt="" className="w-12 h-12 rounded-full object-cover" />
             ) : (
               <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center">
                 <User className="w-6 h-6" />
@@ -127,6 +150,7 @@ function PostPage() {
               <a href={`https://t.me/${post.profiles?.username}`} target="_blank" rel="noreferrer" className="text-xs font-mono text-primary">
                 @{post.profiles?.username}
               </a>
+              {post.profiles?.role_title && <p className="text-xs text-primary/80 mt-1">{post.profiles.role_title}</p>}
               {post.profiles?.bio && <p className="text-sm text-muted-foreground mt-1">{post.profiles.bio}</p>}
             </div>
           </div>
