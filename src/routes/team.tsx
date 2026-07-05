@@ -3,6 +3,7 @@ import { Layout } from "@/components/Layout";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Crown, Shield } from "lucide-react";
+import { TEAM_ROSTER } from "@/lib/team";
 import teamImage from "@/assets/cyber32-team.jpg";
 
 export const Route = createFileRoute("/team")({
@@ -15,16 +16,8 @@ export const Route = createFileRoute("/team")({
   component: Team,
 });
 
-const OWNER = { name: "ویروس ۳۲", handle: "ViRus32_Org", role: "مالک و بنیان‌گذار مجموعه" };
-
-const MEMBERS = [
-  { name: "محمد مهدی", handle: "Habibian_00", role: "مسئول نظارت و مدیریت محتوای کانال‌ها" },
-  { name: "آرتین", handle: null, role: "مسئول توسعه API و ربات‌های تلگرام" },
-  { name: "محمدحسین", handle: "port10808", role: "مدیر و مسئول روابط عمومی" },
-  { name: "ارشیا", handle: "pound_iran", role: "مسئول مدیریت سرورها، زیرساخت و سورس‌ها" },
-  { name: "اوستا", handle: "MichaelOfficial273", role: "مسئول کانال پایگاه‌داده‌ها (Databases)" },
-  { name: "محمد", handle: "Singeleshah", role: "مسئول مدیریت و توسعه پروژه‌های مجموعه" },
-];
+const OWNER = TEAM_ROSTER.find((member) => member.isOwner) ?? TEAM_ROSTER[0];
+const MEMBERS = TEAM_ROSTER.filter((member) => !member.isOwner);
 
 function Team() {
   return (
@@ -51,9 +44,9 @@ function Team() {
             </div>
             <div className="flex-1 min-w-[200px]">
               <Badge className="font-mono bg-primary/20 text-primary border-primary/40">مالک</Badge>
-              <h2 className="text-2xl font-bold mt-2">{OWNER.name}</h2>
-              <a href={`https://t.me/${OWNER.handle}`} target="_blank" rel="noreferrer" className="font-mono text-primary hover:underline">
-                @{OWNER.handle}
+              <h2 className="text-2xl font-bold mt-2">{OWNER.displayName}</h2>
+              <a href={`https://t.me/${OWNER.username}`} target="_blank" rel="noreferrer" className="font-mono text-primary hover:underline">
+                @{OWNER.username}
               </a>
               <p className="text-muted-foreground mt-2 text-sm">{OWNER.role}</p>
             </div>
@@ -71,16 +64,12 @@ function Team() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-bold text-lg">{m.name}</h3>
+                    <h3 className="font-bold text-lg">{m.displayName}</h3>
                     <span className="font-mono text-xs text-muted-foreground">#{String(i + 1).padStart(2, "0")}</span>
                   </div>
-                  {m.handle ? (
-                    <a href={`https://t.me/${m.handle}`} target="_blank" rel="noreferrer" className="font-mono text-sm text-primary hover:underline">
-                      @{m.handle}
-                    </a>
-                  ) : (
-                    <span className="font-mono text-sm text-muted-foreground italic">آیدی نامشخص</span>
-                  )}
+                  <a href={`https://t.me/${m.username}`} target="_blank" rel="noreferrer" className="font-mono text-sm text-primary hover:underline">
+                    @{m.username}
+                  </a>
                   <p className="text-sm text-muted-foreground mt-2">{m.role}</p>
                 </div>
               </div>

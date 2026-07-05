@@ -54,7 +54,6 @@ function PostPage() {
           getMediaDisplayUrl(post.profiles?.avatar_path, post.profiles?.avatar_url),
         ]);
         setPost({ ...post, display_media_url: mediaUrl, display_avatar_url: avatarUrl });
-        await supabase.from("posts").update({ view_count: (post.view_count ?? 0) + 1 }).eq("id", id);
       } else {
         setPost(null);
       }
