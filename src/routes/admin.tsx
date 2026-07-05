@@ -152,7 +152,7 @@ function Admin() {
     }
 
     const withMedia = await Promise.all(
-      ((data as Post[]) ?? []).map(async (post) => ({
+      (((data ?? []) as unknown as Post[])).map(async (post) => ({
         ...post,
         display_media_url: await getMediaDisplayUrl(post.media_path, post.media_url),
       })),
@@ -288,9 +288,13 @@ function Admin() {
 
   const saveProfile = async () => {
     if (!user) return;
-    let avatar_url = profile?.avatar_url ?? null;
+    const targetProfile = activeTab === "profiles"
+      ? profiles.find((item) => item.id === selectedProfileId)
+      : profile;
+    const targetId = activeTab === "profiles" ? (selectedProfileId || user.id) : user.id;
+    let avatar_url = targetProfile?.avatar_url ?? null;
     let avatar_path = null;
-    let banner_url = profile?.banner_url ?? null;
+    let banner_url = targetProfile?.banner_url ?? null;
     let banner_path = null;
     if (avatarFile) {
       const up = await uploadMedia(avatarFile, "avatars");
@@ -308,7 +312,7 @@ function Admin() {
       ...(avatar_path ? { avatar_path } : {}),
       banner_url,
       ...(banner_path ? { banner_path } : {}),
-    }).eq("id", selectedProfileId || user.id);
+    }).eq("id", targetId);
     if (error) toast.error(error.message);
     else {
       toast.success("پروفایل به‌روزرسانی شد");
