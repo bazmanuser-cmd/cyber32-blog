@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { TEAM_ROSTER } from "@/lib/team";
+import { getMediaDisplayUrl } from "@/lib/media";
 
 export const SHARED_PASSWORD = "avesta27cret88";
 
@@ -11,7 +12,9 @@ export type Profile = {
   display_name: string | null;
   role_title: string | null;
   avatar_url: string | null;
+  avatar_path: string | null;
   banner_url: string | null;
+  banner_path: string | null;
   bio: string | null;
 };
 
@@ -45,10 +48,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loadProfile = async (userId: string) => {
     const { data } = await supabase
       .from("profiles")
-      .select("id, username, display_name, role_title, avatar_url, banner_url, bio")
+      .select("id, username, display_name, role_title, avatar_url, avatar_path, banner_url, banner_path, bio")
       .eq("id", userId)
       .maybeSingle();
-    setProfile(data ?? null);
+    if (!data) {
+      setProfile(null);
+      return;
+    }
+    const [avatarUrl, bannerUrl] = await Promise.all([
+      getMediaDisplayUrl(data.avatar_path, data.avatar_url),
+      getMediaDisplayUrl(data.banner_path, data.banner_url),
+    ]);
+    setProfile({ ...data, avatar_url: avatarUrl, banner_url: bannerUrl });
   };
 
   useEffect(() => {

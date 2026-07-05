@@ -5,6 +5,7 @@ const ALLOWED_TAGS = [
 
 const allowedTagSet = new Set(ALLOWED_TAGS);
 const allowedAttrSet = new Set(["href", "target", "rel", "class"]);
+const voidTags = new Set(["br"]);
 
 function escapeHtml(value: string) {
   return value
@@ -22,11 +23,29 @@ function sanitizeHref(value: string) {
 }
 
 export function sanitizeRichText(html: string) {
+  const sanitizeAttributes = (rawAttrs: string) => {
+    const attrs: string[] = [];
+    rawAttrs.replace(/([a-zA-Z0-9:-]+)\s*=\s*("[^"]*"|'[^']*'|[^\s"'>]+)/g, (_match, rawName: string, rawValue: string) => {
+      const name = rawName.toLowerCase();
+      if (!allowedAttrSet.has(name) || name.startsWith("on") || name === "style") return "";
+      const unquoted = String(rawValue).replace(/^['"]|['"]$/g, "");
+      const value = name === "href" ? sanitizeHref(unquoted) : unquoted;
+      if (name === "target") attrs.push('target="_blank"');
+      else if (name === "rel") attrs.push('rel="noreferrer"');
+      else attrs.push(`${name}="${escapeHtml(value)}"`);
+      return "";
+    });
+    return attrs.length ? ` ${attrs.join(" ")}` : "";
+  };
+
   if (typeof window === "undefined" || typeof DOMParser === "undefined") {
-    return html
-      .replace(/<\/?(script|style|iframe|object|embed|form|input)[^>]*>/gi, "")
-      .replace(/\son\w+=("[^"]*"|'[^']*'|[^\s>]*)/gi, "")
-      .replace(/\sstyle=("[^"]*"|'[^']*'|[^\s>]*)/gi, "");
+    return html.replace(/<\s*(\/?)\s*([a-zA-Z0-9]+)([^>]*)>/g, (_match, closing: string, rawTag: string, rawAttrs: string) => {
+      const tag = rawTag.toLowerCase();
+      if (!allowedTagSet.has(tag)) return "";
+      if (closing) return voidTags.has(tag) ? "" : `</${tag}>`;
+      if (voidTags.has(tag)) return `<${tag}>`;
+      return `<${tag}${sanitizeAttributes(rawAttrs)}>`;
+    });
   }
 
   const parser = new DOMParser();
