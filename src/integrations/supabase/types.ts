@@ -20,61 +20,94 @@ export type Database = {
           category: string | null
           content: string
           created_at: string
+          excerpt: string | null
+          featured: boolean
           id: string
+          media_name: string | null
+          media_path: string | null
+          media_size: number | null
           media_type: string | null
           media_url: string | null
+          tags: string[]
           title: string
           updated_at: string
+          view_count: number
         }
         Insert: {
           author_id: string
           category?: string | null
           content: string
           created_at?: string
+          excerpt?: string | null
+          featured?: boolean
           id?: string
+          media_name?: string | null
+          media_path?: string | null
+          media_size?: number | null
           media_type?: string | null
           media_url?: string | null
+          tags?: string[]
           title: string
           updated_at?: string
+          view_count?: number
         }
         Update: {
           author_id?: string
           category?: string | null
           content?: string
           created_at?: string
+          excerpt?: string | null
+          featured?: boolean
           id?: string
+          media_name?: string | null
+          media_path?: string | null
+          media_size?: number | null
           media_type?: string | null
           media_url?: string | null
+          tags?: string[]
           title?: string
           updated_at?: string
+          view_count?: number
         }
         Relationships: []
       }
       profiles: {
         Row: {
+          avatar_path: string | null
           avatar_url: string | null
+          banner_path: string | null
+          banner_url: string | null
           bio: string | null
           created_at: string
           display_name: string | null
           id: string
+          role_title: string | null
           updated_at: string
           username: string
         }
         Insert: {
+          avatar_path?: string | null
           avatar_url?: string | null
+          banner_path?: string | null
+          banner_url?: string | null
           bio?: string | null
           created_at?: string
           display_name?: string | null
           id: string
+          role_title?: string | null
           updated_at?: string
           username: string
         }
         Update: {
+          avatar_path?: string | null
           avatar_url?: string | null
+          banner_path?: string | null
+          banner_url?: string | null
           bio?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
+          role_title?: string | null
           updated_at?: string
           username?: string
         }
