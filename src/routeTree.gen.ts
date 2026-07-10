@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as CoursesRouteImport } from './routes/courses'
@@ -29,6 +30,11 @@ const TeamRoute = TeamRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/courses': typeof CoursesRoute
   '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/team': typeof TeamRoute
   '/post/$id': typeof PostIdRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/courses': typeof CoursesRoute
   '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/team': typeof TeamRoute
   '/post/$id': typeof PostIdRoute
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/courses': typeof CoursesRoute
   '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/team': typeof TeamRoute
   '/post/$id': typeof PostIdRoute
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/courses'
     | '/faq'
     | '/login'
+    | '/privacy'
     | '/profile'
     | '/team'
     | '/post/$id'
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/courses'
     | '/faq'
     | '/login'
+    | '/privacy'
     | '/profile'
     | '/team'
     | '/post/$id'
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/courses'
     | '/faq'
     | '/login'
+    | '/privacy'
     | '/profile'
     | '/team'
     | '/post/$id'
@@ -168,6 +180,7 @@ export interface RootRouteChildren {
   CoursesRoute: typeof CoursesRoute
   FaqRoute: typeof FaqRoute
   LoginRoute: typeof LoginRoute
+  PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   TeamRoute: typeof TeamRoute
   PostIdRoute: typeof PostIdRoute
@@ -187,6 +200,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -264,6 +284,7 @@ const rootRouteChildren: RootRouteChildren = {
   CoursesRoute: CoursesRoute,
   FaqRoute: FaqRoute,
   LoginRoute: LoginRoute,
+  PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   TeamRoute: TeamRoute,
   PostIdRoute: PostIdRoute,
