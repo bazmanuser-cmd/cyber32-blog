@@ -30,12 +30,29 @@ export function Layout({ children }: { children: ReactNode }) {
             <Link to="/" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
               <Home className="w-4 h-4" /> خانه
             </Link>
+            <Link to="/courses" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
+              <GraduationCap className="w-4 h-4" /> دوره‌ها
+            </Link>
+            <Link to="/articles" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
+              <FileText className="w-4 h-4" /> مقالات
+            </Link>
             <Link to="/team" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
               <Users className="w-4 h-4" /> تیم
             </Link>
+            <Link to="/about" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
+              <Info className="w-4 h-4" /> درباره
+            </Link>
+            <Link to="/faq" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
+              <HelpCircle className="w-4 h-4" /> سوالات
+            </Link>
+            {user && (
+              <Link to="/dashboard" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
+                <LayoutDashboard className="w-4 h-4" /> پنل
+              </Link>
+            )}
             {user && (
               <Link to="/admin" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
-                <FileText className="w-4 h-4" /> پنل ادمین
+                <Shield className="w-4 h-4" /> ادمین
               </Link>
             )}
           </nav>
