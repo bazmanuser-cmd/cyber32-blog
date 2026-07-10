@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PostIdRouteImport } from './routes/post.$id'
@@ -29,6 +30,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoursesRoute = CoursesRouteImport.update({
+  id: '/courses',
+  path: '/courses',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -50,6 +56,7 @@ const PostIdRoute = PostIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/courses': typeof CoursesRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/team': typeof TeamRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/courses': typeof CoursesRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/team': typeof TeamRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/courses': typeof CoursesRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/team': typeof TeamRoute
@@ -74,13 +83,28 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/login' | '/profile' | '/team' | '/post/$id'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/courses'
+    | '/login'
+    | '/profile'
+    | '/team'
+    | '/post/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/login' | '/profile' | '/team' | '/post/$id'
+  to:
+    | '/'
+    | '/admin'
+    | '/courses'
+    | '/login'
+    | '/profile'
+    | '/team'
+    | '/post/$id'
   id:
     | '__root__'
     | '/'
     | '/admin'
+    | '/courses'
     | '/login'
     | '/profile'
     | '/team'
@@ -90,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  CoursesRoute: typeof CoursesRoute
   LoginRoute: typeof LoginRoute
   ProfileRoute: typeof ProfileRoute
   TeamRoute: typeof TeamRoute
@@ -119,6 +144,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/courses': {
+      id: '/courses'
+      path: '/courses'
+      fullPath: '/courses'
+      preLoaderRoute: typeof CoursesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -146,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  CoursesRoute: CoursesRoute,
   LoginRoute: LoginRoute,
   ProfileRoute: ProfileRoute,
   TeamRoute: TeamRoute,
