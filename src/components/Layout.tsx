@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import { LogOut, Shield, User, Users, FileText, Home } from "lucide-react";
+import { LogOut, Shield, User, Users, FileText, Home, GraduationCap, HelpCircle, LayoutDashboard, Info } from "lucide-react";
 import type { ReactNode } from "react";
 
 export function Layout({ children }: { children: ReactNode }) {
