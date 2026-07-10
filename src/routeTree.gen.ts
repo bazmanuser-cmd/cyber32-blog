@@ -15,6 +15,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as FaqRouteImport } from './routes/faq'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ArticlesRouteImport } from './routes/articles'
@@ -51,6 +52,11 @@ const LoginRoute = LoginRouteImport.update({
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
   path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CoursesRoute = CoursesRouteImport.update({
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/articles': typeof ArticlesRoute
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
+  '/dashboard': typeof DashboardRoute
   '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/articles': typeof ArticlesRoute
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
+  '/dashboard': typeof DashboardRoute
   '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/articles': typeof ArticlesRoute
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
+  '/dashboard': typeof DashboardRoute
   '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/articles'
     | '/contact'
     | '/courses'
+    | '/dashboard'
     | '/faq'
     | '/login'
     | '/privacy'
@@ -159,6 +169,7 @@ export interface FileRouteTypes {
     | '/articles'
     | '/contact'
     | '/courses'
+    | '/dashboard'
     | '/faq'
     | '/login'
     | '/privacy'
@@ -174,6 +185,7 @@ export interface FileRouteTypes {
     | '/articles'
     | '/contact'
     | '/courses'
+    | '/dashboard'
     | '/faq'
     | '/login'
     | '/privacy'
@@ -190,6 +202,7 @@ export interface RootRouteChildren {
   ArticlesRoute: typeof ArticlesRoute
   ContactRoute: typeof ContactRoute
   CoursesRoute: typeof CoursesRoute
+  DashboardRoute: typeof DashboardRoute
   FaqRoute: typeof FaqRoute
   LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -241,6 +254,13 @@ declare module '@tanstack/react-router' {
       path: '/faq'
       fullPath: '/faq'
       preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/courses': {
@@ -302,6 +322,7 @@ const rootRouteChildren: RootRouteChildren = {
   ArticlesRoute: ArticlesRoute,
   ContactRoute: ContactRoute,
   CoursesRoute: CoursesRoute,
+  DashboardRoute: DashboardRoute,
   FaqRoute: FaqRoute,
   LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
