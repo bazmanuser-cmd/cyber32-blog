@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ArticlesRouteImport } from './routes/articles'
@@ -33,6 +34,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CoursesRoute = CoursesRouteImport.update({
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/articles': typeof ArticlesRoute
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
+  '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/team': typeof TeamRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/articles': typeof ArticlesRoute
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
+  '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/team': typeof TeamRoute
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/articles': typeof ArticlesRoute
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
+  '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/team': typeof TeamRoute
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/articles'
     | '/contact'
     | '/courses'
+    | '/faq'
     | '/login'
     | '/profile'
     | '/team'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/articles'
     | '/contact'
     | '/courses'
+    | '/faq'
     | '/login'
     | '/profile'
     | '/team'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/articles'
     | '/contact'
     | '/courses'
+    | '/faq'
     | '/login'
     | '/profile'
     | '/team'
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   ArticlesRoute: typeof ArticlesRoute
   ContactRoute: typeof ContactRoute
   CoursesRoute: typeof CoursesRoute
+  FaqRoute: typeof FaqRoute
   LoginRoute: typeof LoginRoute
   ProfileRoute: typeof ProfileRoute
   TeamRoute: typeof TeamRoute
@@ -181,6 +194,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/courses': {
@@ -242,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   ArticlesRoute: ArticlesRoute,
   ContactRoute: ContactRoute,
   CoursesRoute: CoursesRoute,
+  FaqRoute: FaqRoute,
   LoginRoute: LoginRoute,
   ProfileRoute: ProfileRoute,
   TeamRoute: TeamRoute,
