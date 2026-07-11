@@ -29,6 +29,7 @@ import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PostIdRouteImport } from './routes/post.$id'
 import { Route as CoursesSlugRouteImport } from './routes/courses.$slug'
+import { Route as AdminCoursesRouteImport } from './routes/admin.courses'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -130,12 +131,17 @@ const CoursesSlugRoute = CoursesSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => CoursesRoute,
 } as any)
+const AdminCoursesRoute = AdminCoursesRouteImport.update({
+  id: '/courses',
+  path: '/courses',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/articles': typeof ArticlesRoute
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRouteWithChildren
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
   '/terms': typeof TermsRoute
+  '/admin/courses': typeof AdminCoursesRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/post/$id': typeof PostIdRoute
 }
@@ -157,7 +164,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/articles': typeof ArticlesRoute
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRouteWithChildren
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
   '/terms': typeof TermsRoute
+  '/admin/courses': typeof AdminCoursesRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/post/$id': typeof PostIdRoute
 }
@@ -180,7 +188,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/articles': typeof ArticlesRoute
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRouteWithChildren
@@ -195,6 +203,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
   '/terms': typeof TermsRoute
+  '/admin/courses': typeof AdminCoursesRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/post/$id': typeof PostIdRoute
 }
@@ -219,6 +228,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/team'
     | '/terms'
+    | '/admin/courses'
     | '/courses/$slug'
     | '/post/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -241,6 +251,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/team'
     | '/terms'
+    | '/admin/courses'
     | '/courses/$slug'
     | '/post/$id'
   id:
@@ -263,6 +274,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/team'
     | '/terms'
+    | '/admin/courses'
     | '/courses/$slug'
     | '/post/$id'
   fileRoutesById: FileRoutesById
@@ -271,7 +283,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   AboutRoute: typeof AboutRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   ArticlesRoute: typeof ArticlesRoute
   ContactRoute: typeof ContactRoute
   CoursesRoute: typeof CoursesRouteWithChildren
@@ -431,8 +443,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoursesSlugRouteImport
       parentRoute: typeof CoursesRoute
     }
+    '/admin/courses': {
+      id: '/admin/courses'
+      path: '/courses'
+      fullPath: '/admin/courses'
+      preLoaderRoute: typeof AdminCoursesRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminCoursesRoute: typeof AdminCoursesRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminCoursesRoute: AdminCoursesRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface CoursesRouteChildren {
   CoursesSlugRoute: typeof CoursesSlugRoute
@@ -449,7 +478,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   AboutRoute: AboutRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   ArticlesRoute: ArticlesRoute,
   ContactRoute: ContactRoute,
   CoursesRoute: CoursesRouteWithChildren,
@@ -469,3 +498,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
