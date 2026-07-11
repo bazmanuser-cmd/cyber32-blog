@@ -37,7 +37,7 @@ async function writeAudit(
     action,
     entity: entity ?? null,
     entity_id: entityId ?? null,
-    metadata,
+    metadata: metadata as never,
     ip,
     user_agent: ua,
   });
