@@ -133,7 +133,7 @@ function PostPage() {
           <video src={post.display_media_url} controls className="w-full rounded-lg mt-8 border border-border" />
         )}
 
-        <div className="mt-8 rich-content text-lg" dangerouslySetInnerHTML={{ __html: sanitizeRichText(post.content) }} />
+        <RichContent html={post.content} className="mt-8 text-lg" />
 
         <Card className="mt-12 p-5 bg-card/50 border-primary/20">
           <div className="text-xs font-mono text-primary mb-2">// SIGNED_BY</div>
