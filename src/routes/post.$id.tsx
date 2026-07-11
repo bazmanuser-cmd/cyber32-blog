@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { getMediaDisplayUrl } from "@/lib/media";
+import { RichContent } from "@/components/RichContent";
 import { sanitizeRichText } from "@/lib/rich-text";
 import { Layout } from "@/components/Layout";
 import { Card } from "@/components/ui/card";
