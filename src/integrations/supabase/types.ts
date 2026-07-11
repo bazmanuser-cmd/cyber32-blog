@@ -50,6 +50,107 @@ export type Database = {
         }
         Relationships: []
       }
+      courses: {
+        Row: {
+          content: string
+          cover_path: string | null
+          cover_url: string | null
+          created_at: string
+          excerpt: string | null
+          hours: number
+          id: string
+          instructor_id: string | null
+          is_free: boolean
+          level: string
+          price_toman: number
+          published: boolean
+          slug: string
+          tag: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string
+          cover_path?: string | null
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          hours?: number
+          id?: string
+          instructor_id?: string | null
+          is_free?: boolean
+          level?: string
+          price_toman?: number
+          published?: boolean
+          slug: string
+          tag?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          cover_path?: string | null
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          hours?: number
+          id?: string
+          instructor_id?: string | null
+          is_free?: boolean
+          level?: string
+          price_toman?: number
+          published?: boolean
+          slug?: string
+          tag?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      lessons: {
+        Row: {
+          content: string
+          course_id: string
+          created_at: string
+          id: string
+          is_free: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          content?: string
+          course_id: string
+          created_at?: string
+          id?: string
+          is_free?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          content?: string
+          course_id?: string
+          created_at?: string
+          id?: string
+          is_free?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           author_id: string

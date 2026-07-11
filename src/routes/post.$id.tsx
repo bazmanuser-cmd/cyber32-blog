@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { getMediaDisplayUrl } from "@/lib/media";
-import { sanitizeRichText } from "@/lib/rich-text";
+import { RichContent } from "@/components/RichContent";
 import { Layout } from "@/components/Layout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -132,7 +132,7 @@ function PostPage() {
           <video src={post.display_media_url} controls className="w-full rounded-lg mt-8 border border-border" />
         )}
 
-        <div className="mt-8 rich-content text-lg" dangerouslySetInnerHTML={{ __html: sanitizeRichText(post.content) }} />
+        <RichContent html={post.content} className="mt-8 text-lg" />
 
         <Card className="mt-12 p-5 bg-card/50 border-primary/20">
           <div className="text-xs font-mono text-primary mb-2">// SIGNED_BY</div>
