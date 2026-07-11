@@ -29,6 +29,7 @@ function DashboardPage() {
     { icon: CreditCard, title: "اشتراک", desc: "وضعیت و تمدید", to: "/dashboard" as const },
     { icon: Bell, title: "اعلان‌ها", desc: "پیام‌ها و رویدادها", to: "/dashboard" as const },
     { icon: Settings, title: "تنظیمات پروفایل", desc: "ویرایش اطلاعات و رمز", to: "/profile" as const },
+    { icon: Shield, title: "امنیت حساب", desc: "رمز، ۲FA و لاگ فعالیت", to: "/security" as const },
   ];
 
   return (

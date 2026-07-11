@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          entity: string | null
+          entity_id: string | null
+          id: string
+          ip: string | null
+          metadata: Json
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          entity?: string | null
+          entity_id?: string | null
+          id?: string
+          ip?: string | null
+          metadata?: Json
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          entity?: string | null
+          entity_id?: string | null
+          id?: string
+          ip?: string | null
+          metadata?: Json
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
           author_id: string
@@ -90,6 +126,8 @@ export type Database = {
           display_name: string | null
           id: string
           role_title: string | null
+          two_factor_enabled: boolean
+          two_factor_secret: string | null
           updated_at: string
           username: string
         }
@@ -103,6 +141,8 @@ export type Database = {
           display_name?: string | null
           id: string
           role_title?: string | null
+          two_factor_enabled?: boolean
+          two_factor_secret?: string | null
           updated_at?: string
           username: string
         }
@@ -116,8 +156,28 @@ export type Database = {
           display_name?: string | null
           id?: string
           role_title?: string | null
+          two_factor_enabled?: boolean
+          two_factor_secret?: string | null
           updated_at?: string
           username?: string
+        }
+        Relationships: []
+      }
+      rate_limits: {
+        Row: {
+          count: number
+          key: string
+          window_start: string
+        }
+        Insert: {
+          count?: number
+          key: string
+          window_start: string
+        }
+        Update: {
+          count?: number
+          key?: string
+          window_start?: string
         }
         Relationships: []
       }
