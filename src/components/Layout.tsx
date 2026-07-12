@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import { LogOut, Shield, User, Users, FileText, Home, GraduationCap, HelpCircle, LayoutDashboard, Info } from "lucide-react";
+import { LogOut, Shield, User, Users, FileText, Home, GraduationCap, HelpCircle, LayoutDashboard, Info, Crown } from "lucide-react";
 import type { ReactNode } from "react";
 
 export function Layout({ children }: { children: ReactNode }) {
@@ -44,6 +44,9 @@ export function Layout({ children }: { children: ReactNode }) {
             </Link>
             <Link to="/faq" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
               <HelpCircle className="w-4 h-4" /> سوالات
+            </Link>
+            <Link to="/vip" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2 text-primary">
+              <Crown className="w-4 h-4" /> VIP
             </Link>
             {user && (
               <Link to="/dashboard" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">

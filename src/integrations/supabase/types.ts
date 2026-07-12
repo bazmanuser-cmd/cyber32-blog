@@ -324,6 +324,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_files: {
+        Row: {
+          created_at: string
+          folder: string
+          id: string
+          is_public: boolean
+          mime_type: string | null
+          name: string
+          path: string
+          size_bytes: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          folder?: string
+          id?: string
+          is_public?: boolean
+          mime_type?: string | null
+          name: string
+          path: string
+          size_bytes?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          folder?: string
+          id?: string
+          is_public?: boolean
+          mime_type?: string | null
+          name?: string
+          path?: string
+          size_bytes?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -345,6 +384,51 @@ export type Database = {
         }
         Relationships: []
       }
+      vip_subscriptions: {
+        Row: {
+          admin_note: string | null
+          amount_toman: number
+          created_at: string
+          expires_at: string | null
+          id: string
+          payment_method: string | null
+          plan: string
+          starts_at: string | null
+          status: string
+          storage_quota_mb: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          amount_toman?: number
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          payment_method?: string | null
+          plan?: string
+          starts_at?: string | null
+          status?: string
+          storage_quota_mb?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          amount_toman?: number
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          payment_method?: string | null
+          plan?: string
+          starts_at?: string | null
+          status?: string
+          storage_quota_mb?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -357,6 +441,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_vip: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "owner" | "admin" | "instructor" | "author" | "vip" | "user"
