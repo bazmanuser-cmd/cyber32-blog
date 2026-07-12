@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VipRouteImport } from './routes/vip'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -22,6 +23,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CloudRouteImport } from './routes/cloud'
 import { Route as ArticlesRouteImport } from './routes/articles'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
@@ -29,8 +31,14 @@ import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PostIdRouteImport } from './routes/post.$id'
 import { Route as CoursesSlugRouteImport } from './routes/courses.$slug'
+import { Route as AdminVipRouteImport } from './routes/admin.vip'
 import { Route as AdminCoursesRouteImport } from './routes/admin.courses'
 
+const VipRoute = VipRouteImport.update({
+  id: '/vip',
+  path: '/vip',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -96,6 +104,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CloudRoute = CloudRouteImport.update({
+  id: '/cloud',
+  path: '/cloud',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ArticlesRoute = ArticlesRouteImport.update({
   id: '/articles',
   path: '/articles',
@@ -131,6 +144,11 @@ const CoursesSlugRoute = CoursesSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => CoursesRoute,
 } as any)
+const AdminVipRoute = AdminVipRouteImport.update({
+  id: '/vip',
+  path: '/vip',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCoursesRoute = AdminCoursesRouteImport.update({
   id: '/courses',
   path: '/courses',
@@ -143,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/articles': typeof ArticlesRoute
+  '/cloud': typeof CloudRoute
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRouteWithChildren
   '/dashboard': typeof DashboardRoute
@@ -156,7 +175,9 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
   '/terms': typeof TermsRoute
+  '/vip': typeof VipRoute
   '/admin/courses': typeof AdminCoursesRoute
+  '/admin/vip': typeof AdminVipRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/post/$id': typeof PostIdRoute
 }
@@ -166,6 +187,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/articles': typeof ArticlesRoute
+  '/cloud': typeof CloudRoute
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRouteWithChildren
   '/dashboard': typeof DashboardRoute
@@ -179,7 +201,9 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
   '/terms': typeof TermsRoute
+  '/vip': typeof VipRoute
   '/admin/courses': typeof AdminCoursesRoute
+  '/admin/vip': typeof AdminVipRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/post/$id': typeof PostIdRoute
 }
@@ -190,6 +214,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/articles': typeof ArticlesRoute
+  '/cloud': typeof CloudRoute
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRouteWithChildren
   '/dashboard': typeof DashboardRoute
@@ -203,7 +228,9 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRoute
   '/terms': typeof TermsRoute
+  '/vip': typeof VipRoute
   '/admin/courses': typeof AdminCoursesRoute
+  '/admin/vip': typeof AdminVipRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/post/$id': typeof PostIdRoute
 }
@@ -215,6 +242,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/articles'
+    | '/cloud'
     | '/contact'
     | '/courses'
     | '/dashboard'
@@ -228,7 +256,9 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/team'
     | '/terms'
+    | '/vip'
     | '/admin/courses'
+    | '/admin/vip'
     | '/courses/$slug'
     | '/post/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -238,6 +268,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/articles'
+    | '/cloud'
     | '/contact'
     | '/courses'
     | '/dashboard'
@@ -251,7 +282,9 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/team'
     | '/terms'
+    | '/vip'
     | '/admin/courses'
+    | '/admin/vip'
     | '/courses/$slug'
     | '/post/$id'
   id:
@@ -261,6 +294,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/articles'
+    | '/cloud'
     | '/contact'
     | '/courses'
     | '/dashboard'
@@ -274,7 +308,9 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/team'
     | '/terms'
+    | '/vip'
     | '/admin/courses'
+    | '/admin/vip'
     | '/courses/$slug'
     | '/post/$id'
   fileRoutesById: FileRoutesById
@@ -285,6 +321,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
   ArticlesRoute: typeof ArticlesRoute
+  CloudRoute: typeof CloudRoute
   ContactRoute: typeof ContactRoute
   CoursesRoute: typeof CoursesRouteWithChildren
   DashboardRoute: typeof DashboardRoute
@@ -298,11 +335,19 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TeamRoute: typeof TeamRoute
   TermsRoute: typeof TermsRoute
+  VipRoute: typeof VipRoute
   PostIdRoute: typeof PostIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/vip': {
+      id: '/vip'
+      path: '/vip'
+      fullPath: '/vip'
+      preLoaderRoute: typeof VipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -394,6 +439,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cloud': {
+      id: '/cloud'
+      path: '/cloud'
+      fullPath: '/cloud'
+      preLoaderRoute: typeof CloudRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/articles': {
       id: '/articles'
       path: '/articles'
@@ -443,6 +495,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoursesSlugRouteImport
       parentRoute: typeof CoursesRoute
     }
+    '/admin/vip': {
+      id: '/admin/vip'
+      path: '/vip'
+      fullPath: '/admin/vip'
+      preLoaderRoute: typeof AdminVipRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/courses': {
       id: '/admin/courses'
       path: '/courses'
@@ -455,10 +514,12 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminCoursesRoute: typeof AdminCoursesRoute
+  AdminVipRoute: typeof AdminVipRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminCoursesRoute: AdminCoursesRoute,
+  AdminVipRoute: AdminVipRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -480,6 +541,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
   ArticlesRoute: ArticlesRoute,
+  CloudRoute: CloudRoute,
   ContactRoute: ContactRoute,
   CoursesRoute: CoursesRouteWithChildren,
   DashboardRoute: DashboardRoute,
@@ -493,6 +555,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TeamRoute: TeamRoute,
   TermsRoute: TermsRoute,
+  VipRoute: VipRoute,
   PostIdRoute: PostIdRoute,
 }
 export const routeTree = rootRouteImport

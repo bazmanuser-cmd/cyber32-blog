@@ -25,8 +25,8 @@ function DashboardPage() {
   const items = [
     { icon: GraduationCap, title: "دوره‌های من", desc: "دوره‌های ثبت‌نامی شما", to: "/courses" as const },
     { icon: FileText, title: "مقالات من", desc: "پیش‌نویس‌ها و منتشرشده", to: "/articles" as const },
-    { icon: HardDrive, title: "فضای ابری", desc: "۱ گیگابایت اختصاصی VIP", to: "/dashboard" as const },
-    { icon: CreditCard, title: "اشتراک", desc: "وضعیت و تمدید", to: "/dashboard" as const },
+    { icon: HardDrive, title: "فضای ابری", desc: "۱ گیگابایت (VIP: تا ۵۰GB)", to: "/cloud" as const },
+    { icon: CreditCard, title: "اشتراک VIP", desc: "وضعیت و ارتقا", to: "/vip" as const },
     { icon: Bell, title: "اعلان‌ها", desc: "پیام‌ها و رویدادها", to: "/dashboard" as const },
     { icon: Settings, title: "تنظیمات پروفایل", desc: "ویرایش اطلاعات و رمز", to: "/profile" as const },
     { icon: Shield, title: "امنیت حساب", desc: "رمز، ۲FA و لاگ فعالیت", to: "/security" as const },
