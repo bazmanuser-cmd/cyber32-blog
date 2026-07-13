@@ -3,7 +3,7 @@ import { Layout } from "@/components/Layout";
 import { useAuth } from "@/lib/auth";
 import { useRoles } from "@/lib/roles";
 import { Card } from "@/components/ui/card";
-import { LayoutDashboard, GraduationCap, HardDrive, FileText, Bell, Settings, Shield, CreditCard } from "lucide-react";
+import { LayoutDashboard, GraduationCap, HardDrive, FileText, Bell, Settings, Shield, CreditCard, Map, BookOpen, Crown } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "پنل کاربری | سایبر ۳۲" }, { name: "robots", content: "noindex" }] }),
@@ -61,13 +61,36 @@ function DashboardPage() {
             </Link>
           ))}
           {isAdmin && (
-            <Link to="/admin">
-              <Card className="p-5 bg-primary/5 border-primary/40 backdrop-blur-xl hover:border-primary transition-all h-full">
-                <Shield className="w-6 h-6 text-primary mb-3" />
-                <div className="font-bold text-primary">پنل مدیریت</div>
-                <div className="text-sm text-muted-foreground mt-1">مدیریت پست‌ها، کاربران و محتوا</div>
-              </Card>
-            </Link>
+            <>
+              <Link to="/admin">
+                <Card className="p-5 bg-primary/5 border-primary/40 backdrop-blur-xl hover:border-primary transition-all h-full">
+                  <Shield className="w-6 h-6 text-primary mb-3" />
+                  <div className="font-bold text-primary">پنل مدیریت پست‌ها</div>
+                  <div className="text-sm text-muted-foreground mt-1">پست‌های اختصاصی و مدیریت محتوا</div>
+                </Card>
+              </Link>
+              <Link to="/admin/courses">
+                <Card className="p-5 bg-primary/5 border-primary/40 backdrop-blur-xl hover:border-primary transition-all h-full">
+                  <BookOpen className="w-6 h-6 text-primary mb-3" />
+                  <div className="font-bold text-primary">مدیریت دوره‌ها</div>
+                  <div className="text-sm text-muted-foreground mt-1">افزودن، ویرایش و انتشار دوره‌ها</div>
+                </Card>
+              </Link>
+              <Link to="/admin/vip">
+                <Card className="p-5 bg-primary/5 border-primary/40 backdrop-blur-xl hover:border-primary transition-all h-full">
+                  <Crown className="w-6 h-6 text-primary mb-3" />
+                  <div className="font-bold text-primary">درخواست‌های VIP</div>
+                  <div className="text-sm text-muted-foreground mt-1">تأیید و مدیریت اشتراک‌ها</div>
+                </Card>
+              </Link>
+              <Link to="/admin/sitemap">
+                <Card className="p-5 bg-primary/5 border-primary/40 backdrop-blur-xl hover:border-primary transition-all h-full">
+                  <Map className="w-6 h-6 text-primary mb-3" />
+                  <div className="font-bold text-primary">نقشه کامل سایت</div>
+                  <div className="text-sm text-muted-foreground mt-1">دسترسی به تمام مسیرها</div>
+                </Card>
+              </Link>
+            </>
           )}
         </div>
       </section>

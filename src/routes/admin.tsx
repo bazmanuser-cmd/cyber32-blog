@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useRoles } from "@/lib/roles";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { getMediaDisplayUrl, formatFileSize } from "@/lib/media";
@@ -99,6 +100,7 @@ const toolbarActions = [
 
 function Admin() {
   const { user, profile, loading, refreshProfile } = useAuth();
+  const { isAdmin } = useRoles();
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [profiles, setProfiles] = useState<ProfileRow[]>([]);
@@ -142,10 +144,12 @@ function Admin() {
 
   const loadPosts = async () => {
     if (!user) return;
-    const { data, error } = await supabase
+    let q = supabase
       .from("posts")
       .select("*, profiles:author_id(username, display_name, avatar_url)")
       .order("created_at", { ascending: false });
+    if (!isAdmin) q = q.eq("author_id", user.id);
+    const { data, error } = await q;
     if (error) {
       toast.error("خطا در دریافت پست‌ها: " + error.message);
       return;
@@ -184,7 +188,7 @@ function Admin() {
       loadProfiles();
       loadTeam();
     }
-  }, [user]);
+  }, [user, isAdmin]);
 
   useEffect(() => {
     const selected = profiles.find((item) => item.id === selectedProfileId);

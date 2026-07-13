@@ -23,7 +23,8 @@ type AuthContextValue = {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
-  signIn: (username: string, password: string) => Promise<{ error?: string }>;
+  signIn: (usernameOrEmail: string, password: string) => Promise<{ error?: string }>;
+  signUpPublic: (email: string, password: string, username: string, displayName?: string) => Promise<{ error?: string; needsVerification?: boolean }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 };
@@ -79,53 +80,71 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  const signIn = async (rawUsername: string, password: string) => {
-    const username = normalizeUsername(rawUsername);
-    if (!username) return { error: "نام کاربری الزامی است" };
-    if (!ALLOWED_USERNAMES.has(username)) {
-      return { error: "این نام کاربری در فهرست اعضای سایبر ۳۲ تعریف نشده است" };
-    }
+  const signIn = async (rawInput: string, password: string) => {
+    const input = rawInput.trim();
+    if (!input) return { error: "نام کاربری یا ایمیل الزامی است" };
     if (!password) return { error: "رمز عبور الزامی است" };
 
-    const email = usernameToEmail(username);
-
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (!signInError) return {};
-
-    if (password !== SHARED_PASSWORD) {
-      return { error: "رمز عبور اشتباه است" };
+    // Email login (public users)
+    if (input.includes("@") && !input.startsWith("@")) {
+      const { error } = await supabase.auth.signInWithPassword({ email: input.toLowerCase(), password });
+      if (error) return { error: error.message === "Email not confirmed" ? "ایمیل شما هنوز تأیید نشده است. صندوق ورودی خود را بررسی کنید." : "ایمیل یا رمز عبور اشتباه است" };
+      return {};
     }
 
-    const member = TEAM_ROSTER.find((item) => item.username.toLowerCase() === username);
+    // Team username shortcut
+    const username = normalizeUsername(input);
+    if (!ALLOWED_USERNAMES.has(username)) {
+      return { error: "این نام کاربری در فهرست اعضای تعریف نشده است. اگر کاربر عادی هستید با ایمیل وارد شوید." };
+    }
 
+    const email = usernameToEmail(username);
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (!signInError) return {};
+
+    if (password !== SHARED_PASSWORD) return { error: "رمز عبور اشتباه است" };
+
+    const member = TEAM_ROSTER.find((item) => item.username.toLowerCase() === username);
     const { error: signUpError } = await supabase.auth.signUp({
       email,
       password: SHARED_PASSWORD,
       options: {
-        data: {
-          username,
-          display_name: member?.displayName ?? username,
-          role_title: member?.role ?? null,
-        },
+        data: { username, display_name: member?.displayName ?? username, role_title: member?.role ?? null },
         emailRedirectTo: `${window.location.origin}/`,
       },
     });
-
-    if (signUpError) {
-      return { error: signUpError.message };
-    }
-
-    const { error: retryError } = await supabase.auth.signInWithPassword({
-      email,
-      password: SHARED_PASSWORD,
-    });
+    if (signUpError) return { error: signUpError.message };
+    const { error: retryError } = await supabase.auth.signInWithPassword({ email, password: SHARED_PASSWORD });
     if (retryError) return { error: retryError.message };
     return {};
   };
+
+  const signUpPublic = async (email: string, password: string, rawUsername: string, displayName?: string) => {
+    const emailNorm = email.trim().toLowerCase();
+    const username = normalizeUsername(rawUsername);
+    if (!emailNorm.includes("@")) return { error: "ایمیل معتبر وارد کنید" };
+    if (password.length < 8) return { error: "رمز عبور حداقل ۸ کاراکتر" };
+    if (username.length < 3) return { error: "نام کاربری حداقل ۳ کاراکتر" };
+    if (!/^[a-z0-9_]+$/.test(username)) return { error: "نام کاربری فقط حروف کوچک انگلیسی، عدد و _" };
+    if (ALLOWED_USERNAMES.has(username) || username === "virus32_org") {
+      return { error: "این نام کاربری رزرو شده است" };
+    }
+    // Check username uniqueness
+    const { data: existing } = await supabase.from("profiles").select("id").eq("username", username).maybeSingle();
+    if (existing) return { error: "این نام کاربری قبلاً ثبت شده" };
+
+    const { data, error } = await supabase.auth.signUp({
+      email: emailNorm,
+      password,
+      options: {
+        data: { username, display_name: displayName || username },
+        emailRedirectTo: `${window.location.origin}/login`,
+      },
+    });
+    if (error) return { error: error.message };
+    return { needsVerification: !data.session };
+  };
+
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -143,6 +162,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         profile,
         loading,
         signIn,
+        signUpPublic,
         signOut,
         refreshProfile,
       }}

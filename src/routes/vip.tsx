@@ -43,19 +43,13 @@ function VipPage() {
 
   const active = subs.find((s) => s.status === "active" && (!s.expires_at || new Date(s.expires_at) > new Date()));
 
-  const request = async (planKey: string) => {
-    if (!user) { toast.error("ابتدا وارد شوید"); return; }
+  const contact = (planKey: string) => {
     const plan = plans.find((p) => p.key === planKey)!;
-    setBusy(true);
-    const { error } = await supabase.from("vip_subscriptions").insert({
-      user_id: user.id, plan: plan.key, status: "pending",
-      amount_toman: plan.price, storage_quota_mb: plan.quota,
-      payment_method: "manual",
-    });
-    setBusy(false);
-    if (error) toast.error(error.message);
-    else { toast.success("درخواست ثبت شد. برای تأیید با پشتیبانی در ارتباط باشید."); load(); }
+    const msg = encodeURIComponent(`سلام، درخواست اشتراک VIP پلن «${plan.title}» را دارم.`);
+    window.open(`https://t.me/ViRus32_Org?text=${msg}`, "_blank");
+    toast.info("برای فعال‌سازی با مالک در تلگرام تماس بگیرید.");
   };
+  void busy; void setBusy;
 
   return (
     <Layout>
@@ -100,8 +94,8 @@ function VipPage() {
                   <li key={f} className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-400 flex-shrink-0" /> {f}</li>
                 ))}
               </ul>
-              <Button className="w-full mt-6" disabled={busy || !user || !!active} onClick={() => request(p.key)}>
-                {!user ? "ابتدا وارد شوید" : active ? "اشتراک فعال دارید" : "درخواست اشتراک"}
+              <Button className="w-full mt-6" disabled={!!active} onClick={() => contact(p.key)}>
+                {active ? "اشتراک فعال دارید" : "درخواست از طریق تلگرام"}
               </Button>
             </Card>
           ))}
@@ -124,9 +118,16 @@ function VipPage() {
           ))}
         </div>
 
-        <div className="mt-10 text-center text-sm text-muted-foreground font-mono">
-          &gt; پس از ثبت درخواست، تیم پشتیبانی برای فعال‌سازی از طریق تلگرام با شما در ارتباط است.
-        </div>
+        <Card className="mt-10 p-6 bg-primary/5 border-primary/40 text-center">
+          <Crown className="w-8 h-8 text-primary mx-auto mb-3" />
+          <h3 className="font-bold text-lg">فعال‌سازی فقط از طریق تلگرام</h3>
+          <p className="text-sm text-muted-foreground mt-2">
+            برای درخواست، پرداخت و فعال‌سازی اشتراک VIP فقط با مالک مجموعه در تلگرام در ارتباط باشید.
+          </p>
+          <a href="https://t.me/ViRus32_Org" target="_blank" rel="noreferrer" className="inline-block mt-4 px-6 py-3 rounded-md bg-primary text-primary-foreground font-mono">
+            @ViRus32_Org
+          </a>
+        </Card>
       </section>
     </Layout>
   );
