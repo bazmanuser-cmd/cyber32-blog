@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { getMediaDisplayUrl } from "@/lib/media";
 import { RichContent } from "@/components/RichContent";
 import { Layout } from "@/components/Layout";
+import { Comments } from "@/components/Comments";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
