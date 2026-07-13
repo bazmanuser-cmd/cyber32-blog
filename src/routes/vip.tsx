@@ -43,19 +43,13 @@ function VipPage() {
 
   const active = subs.find((s) => s.status === "active" && (!s.expires_at || new Date(s.expires_at) > new Date()));
 
-  const request = async (planKey: string) => {
-    if (!user) { toast.error("ابتدا وارد شوید"); return; }
+  const contact = (planKey: string) => {
     const plan = plans.find((p) => p.key === planKey)!;
-    setBusy(true);
-    const { error } = await supabase.from("vip_subscriptions").insert({
-      user_id: user.id, plan: plan.key, status: "pending",
-      amount_toman: plan.price, storage_quota_mb: plan.quota,
-      payment_method: "manual",
-    });
-    setBusy(false);
-    if (error) toast.error(error.message);
-    else { toast.success("درخواست ثبت شد. برای تأیید با پشتیبانی در ارتباط باشید."); load(); }
+    const msg = encodeURIComponent(`سلام، درخواست اشتراک VIP پلن «${plan.title}» را دارم.`);
+    window.open(`https://t.me/ViRus32_Org?text=${msg}`, "_blank");
+    toast.info("برای فعال‌سازی با مالک در تلگرام تماس بگیرید.");
   };
+  void busy; void setBusy;
 
   return (
     <Layout>
