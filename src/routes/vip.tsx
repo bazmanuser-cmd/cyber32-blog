@@ -118,9 +118,16 @@ function VipPage() {
           ))}
         </div>
 
-        <div className="mt-10 text-center text-sm text-muted-foreground font-mono">
-          &gt; پس از ثبت درخواست، تیم پشتیبانی برای فعال‌سازی از طریق تلگرام با شما در ارتباط است.
-        </div>
+        <Card className="mt-10 p-6 bg-primary/5 border-primary/40 text-center">
+          <Crown className="w-8 h-8 text-primary mx-auto mb-3" />
+          <h3 className="font-bold text-lg">فعال‌سازی فقط از طریق تلگرام</h3>
+          <p className="text-sm text-muted-foreground mt-2">
+            برای درخواست، پرداخت و فعال‌سازی اشتراک VIP فقط با مالک مجموعه در تلگرام در ارتباط باشید.
+          </p>
+          <a href="https://t.me/ViRus32_Org" target="_blank" rel="noreferrer" className="inline-block mt-4 px-6 py-3 rounded-md bg-primary text-primary-foreground font-mono">
+            @ViRus32_Org
+          </a>
+        </Card>
       </section>
     </Layout>
   );
