@@ -100,6 +100,7 @@ const toolbarActions = [
 
 function Admin() {
   const { user, profile, loading, refreshProfile } = useAuth();
+  const { isAdmin } = useRoles();
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [profiles, setProfiles] = useState<ProfileRow[]>([]);
