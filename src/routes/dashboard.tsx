@@ -3,7 +3,7 @@ import { Layout } from "@/components/Layout";
 import { useAuth } from "@/lib/auth";
 import { useRoles } from "@/lib/roles";
 import { Card } from "@/components/ui/card";
-import { LayoutDashboard, GraduationCap, HardDrive, FileText, Bell, Settings, Shield, CreditCard } from "lucide-react";
+import { LayoutDashboard, GraduationCap, HardDrive, FileText, Bell, Settings, Shield, CreditCard, Map, BookOpen, Crown } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "پنل کاربری | سایبر ۳۲" }, { name: "robots", content: "noindex" }] }),

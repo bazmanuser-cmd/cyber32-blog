@@ -32,6 +32,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PostIdRouteImport } from './routes/post.$id'
 import { Route as CoursesSlugRouteImport } from './routes/courses.$slug'
 import { Route as AdminVipRouteImport } from './routes/admin.vip'
+import { Route as AdminSitemapRouteImport } from './routes/admin.sitemap'
 import { Route as AdminCoursesRouteImport } from './routes/admin.courses'
 
 const VipRoute = VipRouteImport.update({
@@ -149,6 +150,11 @@ const AdminVipRoute = AdminVipRouteImport.update({
   path: '/vip',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSitemapRoute = AdminSitemapRouteImport.update({
+  id: '/sitemap',
+  path: '/sitemap',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCoursesRoute = AdminCoursesRouteImport.update({
   id: '/courses',
   path: '/courses',
@@ -177,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/vip': typeof VipRoute
   '/admin/courses': typeof AdminCoursesRoute
+  '/admin/sitemap': typeof AdminSitemapRoute
   '/admin/vip': typeof AdminVipRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/post/$id': typeof PostIdRoute
@@ -203,6 +210,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/vip': typeof VipRoute
   '/admin/courses': typeof AdminCoursesRoute
+  '/admin/sitemap': typeof AdminSitemapRoute
   '/admin/vip': typeof AdminVipRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/post/$id': typeof PostIdRoute
@@ -230,6 +238,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/vip': typeof VipRoute
   '/admin/courses': typeof AdminCoursesRoute
+  '/admin/sitemap': typeof AdminSitemapRoute
   '/admin/vip': typeof AdminVipRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/post/$id': typeof PostIdRoute
@@ -258,6 +267,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/vip'
     | '/admin/courses'
+    | '/admin/sitemap'
     | '/admin/vip'
     | '/courses/$slug'
     | '/post/$id'
@@ -284,6 +294,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/vip'
     | '/admin/courses'
+    | '/admin/sitemap'
     | '/admin/vip'
     | '/courses/$slug'
     | '/post/$id'
@@ -310,6 +321,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/vip'
     | '/admin/courses'
+    | '/admin/sitemap'
     | '/admin/vip'
     | '/courses/$slug'
     | '/post/$id'
@@ -502,6 +514,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminVipRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/sitemap': {
+      id: '/admin/sitemap'
+      path: '/sitemap'
+      fullPath: '/admin/sitemap'
+      preLoaderRoute: typeof AdminSitemapRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/courses': {
       id: '/admin/courses'
       path: '/courses'
@@ -514,11 +533,13 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminCoursesRoute: typeof AdminCoursesRoute
+  AdminSitemapRoute: typeof AdminSitemapRoute
   AdminVipRoute: typeof AdminVipRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminCoursesRoute: AdminCoursesRoute,
+  AdminSitemapRoute: AdminSitemapRoute,
   AdminVipRoute: AdminVipRoute,
 }
 
