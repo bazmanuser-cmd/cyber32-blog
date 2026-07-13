@@ -144,10 +144,12 @@ function Admin() {
 
   const loadPosts = async () => {
     if (!user) return;
-    const { data, error } = await supabase
+    let q = supabase
       .from("posts")
       .select("*, profiles:author_id(username, display_name, avatar_url)")
       .order("created_at", { ascending: false });
+    if (!isAdmin) q = q.eq("author_id", user.id);
+    const { data, error } = await q;
     if (error) {
       toast.error("خطا در دریافت پست‌ها: " + error.message);
       return;
