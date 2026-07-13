@@ -94,8 +94,8 @@ function VipPage() {
                   <li key={f} className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-400 flex-shrink-0" /> {f}</li>
                 ))}
               </ul>
-              <Button className="w-full mt-6" disabled={busy || !user || !!active} onClick={() => request(p.key)}>
-                {!user ? "ابتدا وارد شوید" : active ? "اشتراک فعال دارید" : "درخواست اشتراک"}
+              <Button className="w-full mt-6" disabled={!!active} onClick={() => contact(p.key)}>
+                {active ? "اشتراک فعال دارید" : "درخواست از طریق تلگرام"}
               </Button>
             </Card>
           ))}
