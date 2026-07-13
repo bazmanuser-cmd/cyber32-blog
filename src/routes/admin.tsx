@@ -188,7 +188,7 @@ function Admin() {
       loadProfiles();
       loadTeam();
     }
-  }, [user]);
+  }, [user, isAdmin]);
 
   useEffect(() => {
     const selected = profiles.find((item) => item.id === selectedProfileId);
