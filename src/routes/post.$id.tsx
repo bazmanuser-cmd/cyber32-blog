@@ -155,6 +155,8 @@ function PostPage() {
             </div>
           </div>
         </Card>
+
+        <Comments postId={post.id} />
       </article>
     </Layout>
   );
