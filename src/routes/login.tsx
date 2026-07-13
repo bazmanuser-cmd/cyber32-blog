@@ -9,30 +9,29 @@ import { Layout } from "@/components/Layout";
 import { toast } from "sonner";
 import { Terminal, KeyRound, User } from "lucide-react";
 
-export const Route = createFileRoute("/login")({ component: Login });
+export const Route = createFileRoute("/login")({
+  head: () => ({ meta: [{ title: "ورود | سایبر ۳۲" }, { name: "description", content: "ورود اعضا و کاربران سایبر ۳۲." }] }),
+  component: Login,
+});
 
 function Login() {
   const { signIn, user } = useAuth();
-  const [username, setUsername] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) navigate({ to: "/admin" });
+    if (user) navigate({ to: "/dashboard" });
   }, [user, navigate]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await signIn(username, password);
+    const { error } = await signIn(identifier, password);
     setLoading(false);
-    if (error) {
-      toast.error(error);
-    } else {
-      toast.success("ورود موفق. به سیستم خوش آمدید.");
-      navigate({ to: "/admin" });
-    }
+    if (error) toast.error(error);
+    else { toast.success("ورود موفق."); navigate({ to: "/dashboard" }); }
   };
 
   return (
@@ -44,19 +43,19 @@ function Login() {
             <div className="font-mono text-xs text-primary mb-2">// SECURE_LOGIN</div>
             <h1 className="text-3xl font-bold font-mono text-drip">ACCESS</h1>
             <p className="text-sm text-muted-foreground mt-2">
-              با نام کاربری تلگرام و رمز عبور تیم وارد شوید.
+              اعضای تیم با آیدی تلگرام، کاربران عادی با ایمیل وارد شوند.
             </p>
 
             <form onSubmit={onSubmit} className="mt-8 space-y-4">
               <div>
-                <Label htmlFor="username" className="font-mono text-xs">نام کاربری تلگرام</Label>
+                <Label htmlFor="identifier" className="font-mono text-xs">آیدی تلگرام یا ایمیل</Label>
                 <div className="relative mt-1.5">
                   <User className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   <Input
-                    id="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="@username"
+                    id="identifier"
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
+                    placeholder="@username یا email@example.com"
                     className="pr-10 font-mono"
                     autoComplete="username"
                     required
@@ -91,13 +90,14 @@ function Login() {
             </form>
 
             <div className="mt-6 pt-6 border-t border-border/50 text-xs text-muted-foreground font-mono space-y-1">
-              <div>• نام کاربری = آیدی تلگرام شما</div>
-              <div>• رمز عبور مشترک اعضای تیم</div>
+              <div>• اعضای تیم: آیدی تلگرام + رمز مشترک</div>
+              <div>• کاربر عادی: ایمیل + رمز شخصی</div>
+              <div><Link to="/forgot-password" className="text-primary hover:underline">فراموشی رمز عبور؟</Link></div>
             </div>
 
-            <Link to="/" className="mt-6 block text-center text-xs text-muted-foreground hover:text-primary font-mono">
-              بازگشت به خانه ←
-            </Link>
+            <div className="mt-4 text-center text-sm">
+              حساب ندارید؟ <Link to="/register" className="text-primary font-mono hover:underline">ثبت‌نام</Link>
+            </div>
           </div>
         </Card>
       </div>
