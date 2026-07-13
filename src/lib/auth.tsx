@@ -23,7 +23,8 @@ type AuthContextValue = {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
-  signIn: (username: string, password: string) => Promise<{ error?: string }>;
+  signIn: (usernameOrEmail: string, password: string) => Promise<{ error?: string }>;
+  signUpPublic: (email: string, password: string, username: string, displayName?: string) => Promise<{ error?: string; needsVerification?: boolean }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 };
