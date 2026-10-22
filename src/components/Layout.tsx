@@ -3,6 +3,7 @@ import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { LogOut, Shield, User, Users, FileText, Home, GraduationCap, HelpCircle, LayoutDashboard, Info, Crown } from "lucide-react";
 import type { ReactNode } from "react";
+import logoAsset from "@/assets/cyber32-logo.jpg.asset.json";
 
 export function Layout({ children }: { children: ReactNode }) {
   const { user, profile, signOut } = useAuth();
@@ -13,15 +14,22 @@ export function Layout({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center gap-6">
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-md bg-gradient-to-br from-primary to-primary/40 flex items-center justify-center shadow-glow-soft">
-              <Shield className="w-5 h-5 text-primary-foreground" strokeWidth={2.5} />
-            </div>
+            <img
+              src={logoAsset.url}
+              alt="Cyber32 logo"
+              width={44}
+              height={44}
+              className="w-11 h-11 rounded-xl object-cover ring-1 ring-primary/40 shadow-glow-soft"
+            />
             <div className="leading-tight">
-              <div className="font-mono text-primary text-glow font-bold text-lg tracking-wider">
-                CYBER<span className="text-foreground">32</span>
+              <div className="flex items-center gap-2">
+                <span className="font-black text-lg tracking-wider text-foreground">CYBER32</span>
+                <span className="hidden sm:inline text-[10px] font-mono text-primary border border-primary/40 rounded px-1.5 py-0.5">
+                  @cyber32_ir
+                </span>
               </div>
-              <div className="text-[10px] text-muted-foreground font-mono">
-                @cyber32_ir
+              <div className="text-[10px] text-muted-foreground">
+                تیم امنیت سایبری و آموزش هک
               </div>
             </div>
           </Link>
