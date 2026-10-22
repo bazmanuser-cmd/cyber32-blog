@@ -14,9 +14,7 @@ function ForgotPasswordPage() {
         <KeyRound className="w-12 h-12 text-primary mx-auto mb-6" />
         <h1 className="text-3xl font-bold">فراموشی رمز عبور</h1>
         <p className="text-muted-foreground mt-4 leading-8">
-          چون ورود اعضا با آیدی تلگرام است، برای بازیابی رمز عبور با مالک مجموعه در تلگرام تماس بگیرید تا رمز شما به مقدار پیش‌فرض
-          <span className="font-mono text-primary"> avesta27cret88 </span>
-          بازگردانده شود. سپس در پروفایل، رمز جدید انتخاب کنید.
+          برای بازیابی امن حساب، از طریق تلگرام با مالک مجموعه تماس بگیرید. رمزهای پیش‌فرض یا مشترک برای حساب‌ها استفاده نمی‌شوند.
         </p>
         <a href="https://t.me/ViRus32_Org" target="_blank" rel="noreferrer" className="inline-block mt-6 px-6 py-3 rounded-md bg-primary text-primary-foreground font-mono">
           تماس با @ViRus32_Org

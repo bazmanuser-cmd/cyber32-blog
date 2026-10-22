@@ -1,10 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import { TEAM_ROSTER } from "@/lib/team";
 import { getMediaDisplayUrl } from "@/lib/media";
-
-export const SHARED_PASSWORD = "avesta27cret88";
 
 export type Profile = {
   id: string;
@@ -39,7 +36,10 @@ function usernameToEmail(username: string) {
   return `${username}@cyber32.local`;
 }
 
-const ALLOWED_USERNAMES = new Set(TEAM_ROSTER.map((member) => member.username.toLowerCase()));
+const RESERVED_TEAM_USERNAMES = new Set([
+  "virus32_org", "habibian_00", "arcomion", "port10808", "pound_iran",
+  "michaelofficial273", "singeleshah", "mmdtnt_m", "satantom",
+]);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -92,30 +92,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return {};
     }
 
-    // Team username shortcut
+    // Team accounts use their own password; accounts are never provisioned here.
     const username = normalizeUsername(input);
-    if (!ALLOWED_USERNAMES.has(username)) {
-      return { error: "این نام کاربری در فهرست اعضای تعریف نشده است. اگر کاربر عادی هستید با ایمیل وارد شوید." };
+    if (!/^[a-z0-9_]{3,32}$/.test(username)) return { error: "نام کاربری معتبر وارد کنید" };
+    const { data, error } = await supabase.auth.signInWithPassword({ email: usernameToEmail(username), password });
+    if (error || !data.user) return { error: "نام کاربری یا رمز عبور اشتباه است" };
+    const { data: assignedRoles } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", data.user.id);
+    const isTeamAccount = (assignedRoles ?? []).some(({ role }) => ["owner", "admin", "instructor", "author"].includes(role));
+    if (!isTeamAccount) {
+      await supabase.auth.signOut();
+      return { error: "این حساب دسترسی ورود اعضای مجموعه را ندارد" };
     }
-
-    const email = usernameToEmail(username);
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-    if (!signInError) return {};
-
-    if (password !== SHARED_PASSWORD) return { error: "رمز عبور اشتباه است" };
-
-    const member = TEAM_ROSTER.find((item) => item.username.toLowerCase() === username);
-    const { error: signUpError } = await supabase.auth.signUp({
-      email,
-      password: SHARED_PASSWORD,
-      options: {
-        data: { username, display_name: member?.displayName ?? username, role_title: member?.role ?? null },
-        emailRedirectTo: `${window.location.origin}/`,
-      },
-    });
-    if (signUpError) return { error: signUpError.message };
-    const { error: retryError } = await supabase.auth.signInWithPassword({ email, password: SHARED_PASSWORD });
-    if (retryError) return { error: retryError.message };
     return {};
   };
 
@@ -126,9 +116,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (password.length < 8) return { error: "رمز عبور حداقل ۸ کاراکتر" };
     if (username.length < 3) return { error: "نام کاربری حداقل ۳ کاراکتر" };
     if (!/^[a-z0-9_]+$/.test(username)) return { error: "نام کاربری فقط حروف کوچک انگلیسی، عدد و _" };
-    if (ALLOWED_USERNAMES.has(username) || username === "virus32_org") {
-      return { error: "این نام کاربری رزرو شده است" };
-    }
+    if (RESERVED_TEAM_USERNAMES.has(username)) return { error: "این نام کاربری رزرو شده است" };
     // Check username uniqueness
     const { data: existing } = await supabase.from("profiles").select("id").eq("username", username).maybeSingle();
     if (existing) return { error: "این نام کاربری قبلاً ثبت شده" };

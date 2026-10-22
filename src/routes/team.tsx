@@ -1,85 +1,107 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Crown, Shield } from "lucide-react";
-import { TEAM_ROSTER } from "@/lib/team";
-import teamImage from "@/assets/cyber32-team.jpg";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { Check, Users } from "lucide-react";
 
 export const Route = createFileRoute("/team")({
   head: () => ({
     meta: [
-      { title: "اعضای تیم | Cyber32" },
-      { name: "description", content: "معرفی اعضای تیم سایبر ۳۲ و مسئولیت‌هایشان." },
+      { title: "درخواست عضویت در تیم | Cyber32" },
+      { name: "description", content: "فرم درخواست همکاری با تیم سایبر ۳۲." },
     ],
   }),
-  component: Team,
+  component: TeamApplicationPage,
 });
 
-const OWNER = TEAM_ROSTER.find((member) => member.isOwner) ?? TEAM_ROSTER[0];
-const MEMBERS = TEAM_ROSTER.filter((member) => !member.isOwner);
+type ApplicationField = { key: string; label: string; type: "text" | "textarea"; required: boolean };
+type ApplicationSettings = { enabled?: boolean; fields?: ApplicationField[] };
 
-function Team() {
+function TeamApplicationPage() {
+  const [settings, setSettings] = useState<ApplicationSettings>({});
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    supabase.from("site_settings").select("value").eq("key", "team_application").maybeSingle()
+      .then(({ data }) => setSettings((data?.value ?? {}) as ApplicationSettings));
+  }, []);
+
+  const fields = settings.fields ?? [];
+
+  const submitApplication = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setBusy(true);
+    const { error } = await supabase.from("team_applications").insert({
+      full_name: fullName.trim(),
+      email: email.trim().toLowerCase(),
+      username: username.trim(),
+      answers,
+    });
+    setBusy(false);
+    if (error) toast.error("ثبت درخواست انجام نشد. دوباره تلاش کنید.");
+    else setSubmitted(true);
+  };
+
   return (
     <Layout>
-      <section className="relative border-b border-border/50 overflow-hidden">
-        <div className="absolute inset-0 grid-bg opacity-30" />
-        <div className="relative max-w-5xl mx-auto px-4 py-16 text-center">
-          <div className="font-mono text-xs text-primary">// TEAM_ROSTER</div>
-          <h1 className="text-4xl md:text-6xl font-bold font-mono text-drip mt-2">CYBER32</h1>
-          <p className="text-muted-foreground mt-4 max-w-xl mx-auto">
-            تیمی از متخصصان امنیت سایبری، توسعه‌دهندگان و پژوهشگران در حوزه هک، امنیت و اطلاعات.
-          </p>
+      <section className="max-w-3xl mx-auto px-4 py-14">
+        <div className="flex items-center gap-3 mb-3">
+          <Users className="w-6 h-6 text-primary" />
+          <span className="font-mono text-xs text-primary">// TEAM_APPLICATION</span>
         </div>
-      </section>
+        <h1 className="text-3xl md:text-4xl font-bold">درخواست همکاری با تیم</h1>
+        <p className="mt-3 text-muted-foreground">برای بررسی درخواست، اطلاعات زیر را کامل کنید.</p>
 
-      <section className="max-w-5xl mx-auto px-4 py-12">
-        {/* Owner */}
-        <Card className="p-6 md:p-8 mb-10 border-primary/50 shadow-glow relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-l from-primary/10 to-transparent" />
-          <div className="relative flex items-center gap-6 flex-wrap">
-            <div className="relative">
-              <img src={teamImage} alt="Owner" className="w-24 h-24 rounded-lg object-cover border-2 border-primary/60" />
-              <Crown className="absolute -top-3 -right-3 w-7 h-7 text-primary" fill="currentColor" />
-            </div>
-            <div className="flex-1 min-w-[200px]">
-              <Badge className="font-mono bg-primary/20 text-primary border-primary/40">مالک</Badge>
-              <h2 className="text-2xl font-bold mt-2">{OWNER.displayName}</h2>
-              <a href={`https://t.me/${OWNER.username}`} target="_blank" rel="noreferrer" className="font-mono text-primary hover:underline">
-                @{OWNER.username}
-              </a>
-              <p className="text-muted-foreground mt-2 text-sm">{OWNER.role}</p>
-            </div>
-          </div>
-        </Card>
-
-        {/* Members */}
-        <div className="font-mono text-xs text-muted-foreground mb-4">// MEMBERS [{MEMBERS.length}]</div>
-        <div className="grid md:grid-cols-2 gap-4">
-          {MEMBERS.map((m, i) => (
-            <Card key={i} className="p-5 hover:border-primary/40 transition-all group">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary/30 to-primary/5 flex items-center justify-center border border-primary/30 shrink-0">
-                  <Shield className="w-6 h-6 text-primary" />
+        {submitted ? (
+          <Card className="mt-8 p-8 border-primary/30">
+            <Check className="w-8 h-8 text-primary mb-3" />
+            <h2 className="text-xl font-bold">درخواست شما ثبت شد</h2>
+            <p className="mt-2 text-sm text-muted-foreground">پس از بررسی، با شما از طریق ایمیل تماس می‌گیریم.</p>
+          </Card>
+        ) : settings.enabled === false ? (
+          <Card className="mt-8 p-8 text-muted-foreground">ثبت درخواست عضویت در حال حاضر بسته است.</Card>
+        ) : (
+          <Card className="mt-8 p-6 md:p-8">
+            <form onSubmit={submitApplication} className="space-y-5">
+              <div>
+                <Label htmlFor="application-name">نام و نام خانوادگی</Label>
+                <Input id="application-name" value={fullName} onChange={(event) => setFullName(event.target.value)} minLength={2} maxLength={120} required className="mt-1.5" />
+              </div>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="application-email">ایمیل</Label>
+                  <Input id="application-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} maxLength={320} required className="mt-1.5" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-bold text-lg">{m.displayName}</h3>
-                    <span className="font-mono text-xs text-muted-foreground">#{String(i + 1).padStart(2, "0")}</span>
-                  </div>
-                  <a href={`https://t.me/${m.username}`} target="_blank" rel="noreferrer" className="font-mono text-sm text-primary hover:underline">
-                    @{m.username}
-                  </a>
-                  <p className="text-sm text-muted-foreground mt-2">{m.role}</p>
+                <div>
+                  <Label htmlFor="application-username">نام کاربری تلگرام</Label>
+                  <Input id="application-username" value={username} onChange={(event) => setUsername(event.target.value)} maxLength={80} required className="mt-1.5" />
                 </div>
               </div>
-            </Card>
-          ))}
-        </div>
-
-        <div className="mt-12 text-center text-xs text-muted-foreground font-mono">
-          ساخته شده توسط <span className="text-primary">Avesta</span>
-        </div>
+              {fields.map((field) => (
+                <div key={field.key}>
+                  <Label htmlFor={`application-${field.key}`}>{field.label}</Label>
+                  {field.type === "textarea" ? (
+                    <Textarea id={`application-${field.key}`} value={answers[field.key] ?? ""} onChange={(event) => setAnswers({ ...answers, [field.key]: event.target.value })} required={field.required} rows={4} className="mt-1.5" />
+                  ) : (
+                    <Input id={`application-${field.key}`} value={answers[field.key] ?? ""} onChange={(event) => setAnswers({ ...answers, [field.key]: event.target.value })} required={field.required} className="mt-1.5" />
+                  )}
+                </div>
+              ))}
+              <Button type="submit" disabled={busy}>{busy ? "در حال ثبت..." : "ثبت درخواست"}</Button>
+            </form>
+          </Card>
+        )}
       </section>
     </Layout>
   );

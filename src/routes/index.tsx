@@ -8,8 +8,7 @@ import { Layout } from "@/components/Layout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import teamImage from "@/assets/cyber32-team.jpg";
-import { Terminal, Zap, Lock, ArrowLeft, Calendar, Database, Cloud, ShieldCheck, Users, Eye, Star } from "lucide-react";
+import { Terminal, Zap, Lock, ArrowLeft, Calendar, Database, Cloud, ShieldCheck, Eye, Star } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -35,34 +34,17 @@ type Post = {
   display_media_url?: string | null;
 };
 
-type TeamMember = {
-  id: string;
-  username: string;
-  display_name: string;
-  role_title: string;
-  telegram_url: string | null;
-  is_owner: boolean;
-};
-
 function Index() {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const [{ data: postData }, { data: teamData }] = await Promise.all([
-        supabase
+      const { data: postData } = await supabase
         .from("posts")
         .select("*, profiles:author_id(username, display_name, avatar_url)")
         .order("created_at", { ascending: false })
-          .limit(60),
-        supabase
-          .from("team_members")
-          .select("id, username, display_name, role_title, telegram_url, is_owner")
-          .order("sort_order", { ascending: true })
-          .limit(12),
-      ]);
+        .limit(60);
       const withMedia = await Promise.all(
         (((postData ?? []) as unknown as Post[])).map(async (post) => ({
           ...post,
@@ -70,9 +52,17 @@ function Index() {
         })),
       );
       setPosts(withMedia);
-      setTeamMembers(((teamData ?? []) as unknown as TeamMember[]));
       setLoading(false);
     })();
+  }, []);
+
+  useEffect(() => {
+    supabase.from("site_settings").select("value").eq("key", "seo").maybeSingle().then(({ data }) => {
+      const settings = data?.value as { title?: string; description?: string } | undefined;
+      if (settings?.title) document.title = settings.title;
+      const description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+      if (description && settings?.description) description.content = settings.description;
+    });
   }, []);
 
   const featuredPost = posts.find((post) => post.featured) ?? posts[0];
@@ -103,7 +93,7 @@ function Index() {
                 </a>
               </Button>
               <Button asChild size="lg" variant="outline" className="font-mono">
-                <Link to="/team"><Lock className="w-4 h-4" /> اعضای تیم</Link>
+                <Link to="/team"><Lock className="w-4 h-4" /> درخواست عضویت در تیم</Link>
               </Button>
             </div>
             <div className="mt-8 flex items-center gap-2 font-mono text-xs text-muted-foreground">
@@ -114,7 +104,6 @@ function Index() {
               {[
                 { icon: Database, label: "پست‌ها", value: posts.length },
                 { icon: Cloud, label: "رسانه‌ها", value: posts.filter((p) => p.media_path || p.media_url).length },
-                { icon: Users, label: "اعضا", value: teamMembers.length || 9 },
               ].map((stat) => (
                 <div key={stat.label} className="rounded-lg border border-border/70 bg-card/60 p-3">
                   <stat.icon className="w-4 h-4 text-primary mb-2" />
@@ -124,8 +113,12 @@ function Index() {
               ))}
             </div>
           </div>
-          <div className="relative scanline rounded-lg overflow-hidden border border-primary/30 shadow-glow">
-            <img src={teamImage} alt="Cyber32 Team" className="w-full h-full object-cover" />
+          <div className="relative scanline rounded-lg overflow-hidden border border-primary/30 shadow-glow min-h-72 bg-card/70 grid place-items-center">
+            <div className="text-center p-8">
+              <ShieldCheck className="w-16 h-16 text-primary mx-auto" />
+              <div className="mt-5 font-mono text-sm text-primary">CYBER32 / SECURITY KNOWLEDGE</div>
+              <div className="mt-2 text-sm text-muted-foreground">مقالات و آموزش‌های امنیت سایبری</div>
+            </div>
             <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent" />
             <div className="absolute bottom-3 right-3 font-mono text-xs text-primary/90 bg-background/60 px-2 py-1 rounded backdrop-blur">
               @cyber32_ir
@@ -149,43 +142,6 @@ function Index() {
               <div className="font-mono text-sm mt-1 group-hover:text-primary transition-colors">{c.name}</div>
             </a>
           ))}
-        </div>
-      </section>
-
-      {/* Team quick view */}
-      <section className="border-b border-border/40">
-        <div className="max-w-6xl mx-auto px-4 py-10">
-          <div className="mb-5 flex items-center justify-between gap-4">
-            <div>
-              <div className="font-mono text-xs text-primary">// ACTIVE_OPERATORS</div>
-              <h2 className="text-2xl font-bold mt-1">اعضای مجموعه</h2>
-            </div>
-            <Button asChild variant="outline" size="sm" className="font-mono">
-              <Link to="/team">مشاهده همه</Link>
-            </Button>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {teamMembers.slice(0, 6).map((member) => (
-              <a
-                key={member.id}
-                href={member.telegram_url ?? `https://t.me/${member.username}`}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-lg border border-border/70 bg-card/50 p-4 hover:border-primary/50 transition-all"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/15 border border-primary/25 flex items-center justify-center shrink-0">
-                    {member.is_owner ? <Star className="w-5 h-5 text-primary" /> : <ShieldCheck className="w-5 h-5 text-primary" />}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="font-bold">{member.display_name}</div>
-                    <div className="font-mono text-xs text-primary">@{member.username}</div>
-                    <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{member.role_title}</p>
-                  </div>
-                </div>
-              </a>
-            ))}
-          </div>
         </div>
       </section>
 

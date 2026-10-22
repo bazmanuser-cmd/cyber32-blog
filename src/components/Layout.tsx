@@ -1,12 +1,14 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
+import { useRoles } from "@/lib/roles";
 import { Button } from "@/components/ui/button";
-import { LogOut, Shield, User, Users, FileText, Home, GraduationCap, HelpCircle, LayoutDashboard, Info, Crown } from "lucide-react";
+import { LogOut, Shield, User, FileText, Home, GraduationCap, HelpCircle, LayoutDashboard, Info, Crown } from "lucide-react";
 import type { ReactNode } from "react";
 import logoAsset from "@/assets/cyber32-logo.jpg.asset.json";
 
 export function Layout({ children }: { children: ReactNode }) {
   const { user, profile, signOut } = useAuth();
+  const { isAdmin } = useRoles();
   const navigate = useNavigate();
 
   return (
@@ -44,9 +46,12 @@ export function Layout({ children }: { children: ReactNode }) {
             <Link to="/articles" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
               <FileText className="w-4 h-4" /> مقالات
             </Link>
-            <Link to="/team" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
-              <Users className="w-4 h-4" /> تیم
+            <Link to="/articles" search={{ category: "اخبار" }} className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
+              <FileText className="w-4 h-4" /> اخبار
             </Link>
+            <Link to="/team" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors">عضویت در تیم</Link>
+            <Link to="/register" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors">ثبت‌نام کاربران</Link>
+            <Link to="/login" search={{ type: "team" }} className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors">ورود اعضا</Link>
             <Link to="/about" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
               <Info className="w-4 h-4" /> درباره
             </Link>
@@ -61,7 +66,7 @@ export function Layout({ children }: { children: ReactNode }) {
                 <LayoutDashboard className="w-4 h-4" /> پنل
               </Link>
             )}
-            {user && (
+            {user && isAdmin && (
               <Link to="/admin" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
                 <Shield className="w-4 h-4" /> ادمین
               </Link>

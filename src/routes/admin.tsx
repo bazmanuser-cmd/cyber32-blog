@@ -100,7 +100,7 @@ const toolbarActions = [
 
 function Admin() {
   const { user, profile, loading, refreshProfile } = useAuth();
-  const { isAdmin } = useRoles();
+  const { isAdmin, loading: rolesLoading } = useRoles();
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [profiles, setProfiles] = useState<ProfileRow[]>([]);
@@ -132,6 +132,10 @@ function Admin() {
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
   }, [loading, user, navigate]);
+
+  useEffect(() => {
+    if (!loading && user && !rolesLoading && !isAdmin) navigate({ to: "/dashboard" });
+  }, [loading, user, rolesLoading, isAdmin, navigate]);
 
   useEffect(() => {
     if (profile) {
@@ -348,7 +352,7 @@ function Admin() {
     }
   };
 
-  if (loading || !user) {
+  if (loading || !user || rolesLoading || !isAdmin) {
     return <Layout><div className="p-20 text-center font-mono text-muted-foreground">&gt; در حال بررسی دسترسی...</div></Layout>;
   }
 
@@ -363,9 +367,12 @@ function Admin() {
               @{profile?.username} — {posts.length} پست — {profiles.length} پروفایل — {teamMembers.length} عضو
             </p>
           </div>
-          <Button onClick={() => { resetForm(); setShowForm(!showForm); }} className="font-mono">
-            {showForm ? <><X className="w-4 h-4" /> بستن</> : <><PlusCircle className="w-4 h-4" /> پست جدید</>}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Link to="/owner" className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 text-sm hover:bg-accent">تنظیمات سایت</Link>
+            <Button onClick={() => { resetForm(); setShowForm(!showForm); }} className="font-mono">
+              {showForm ? <><X className="w-4 h-4" /> بستن</> : <><PlusCircle className="w-4 h-4" /> پست جدید</>}
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
@@ -592,7 +599,7 @@ function Admin() {
           </div>
 
           <div className={activeTab === "team" ? "md:col-span-2" : "hidden"}>
-            <h2 className="font-bold mb-4 font-mono text-sm text-muted-foreground">// TEAM_ROSTER</h2>
+            <h2 className="font-bold mb-4 font-mono text-sm text-muted-foreground">// اعضای ثبت‌شده</h2>
             <div className="grid md:grid-cols-2 gap-3">
               {teamMembers.map((member) => (
                 <Card key={member.id} className="p-4 space-y-3">

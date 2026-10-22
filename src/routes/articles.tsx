@@ -9,6 +9,9 @@ import { Input } from "@/components/ui/input";
 import { FileText, Search, Eye, Calendar } from "lucide-react";
 
 export const Route = createFileRoute("/articles")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    category: typeof search.category === "string" ? search.category : "",
+  }),
   head: () => ({
     meta: [
       { title: "مقالات هک و امنیت | سایبر ۳۲" },
@@ -27,6 +30,7 @@ type Row = {
 };
 
 function ArticlesPage() {
+  const { category } = Route.useSearch();
   const [rows, setRows] = useState<Row[]>([]);
   const [q, setQ] = useState("");
   const [loading, setLoading] = useState(true);
@@ -47,6 +51,7 @@ function ArticlesPage() {
   }, []);
 
   const filtered = rows.filter((r) => {
+    if (category && r.category !== category) return false;
     const s = q.trim().toLowerCase();
     if (!s) return true;
     return r.title.toLowerCase().includes(s) || (r.excerpt ?? "").toLowerCase().includes(s) || (r.tags ?? []).some((t) => t.toLowerCase().includes(s));
