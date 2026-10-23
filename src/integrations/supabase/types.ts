@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_permissions: {
+        Row: {
+          created_at: string
+          granted_by: string | null
+          permission: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          granted_by?: string | null
+          permission: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          granted_by?: string | null
+          permission?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string
@@ -185,6 +206,147 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      page_views: {
+        Row: {
+          browser: string | null
+          country: string | null
+          created_at: string
+          device: string
+          id: string
+          path: string
+          referrer: string | null
+          user_id: string | null
+          visitor_hash: string
+        }
+        Insert: {
+          browser?: string | null
+          country?: string | null
+          created_at?: string
+          device?: string
+          id?: string
+          path: string
+          referrer?: string | null
+          user_id?: string | null
+          visitor_hash: string
+        }
+        Update: {
+          browser?: string | null
+          country?: string | null
+          created_at?: string
+          device?: string
+          id?: string
+          path?: string
+          referrer?: string | null
+          user_id?: string | null
+          visitor_hash?: string
+        }
+        Relationships: []
+      }
+      panel_access_config: {
+        Row: {
+          allowed_ips: string[]
+          apply_to_admins: boolean
+          enabled: boolean
+          id: number
+          lockout_minutes: number
+          max_failed_attempts: number
+          mode: string
+          unlock_minutes: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          allowed_ips?: string[]
+          apply_to_admins?: boolean
+          enabled?: boolean
+          id?: number
+          lockout_minutes?: number
+          max_failed_attempts?: number
+          mode?: string
+          unlock_minutes?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          allowed_ips?: string[]
+          apply_to_admins?: boolean
+          enabled?: boolean
+          id?: number
+          lockout_minutes?: number
+          max_failed_attempts?: number
+          mode?: string
+          unlock_minutes?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      panel_devices: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          last_ip: string | null
+          last_seen_at: string | null
+          status: string
+          token_hash: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label?: string
+          last_ip?: string | null
+          last_seen_at?: string | null
+          status?: string
+          token_hash: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          last_ip?: string | null
+          last_seen_at?: string | null
+          status?: string
+          token_hash?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      panel_unlocks: {
+        Row: {
+          created_at: string
+          device_id: string | null
+          expires_at: string
+          id: string
+          ip: string | null
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_id?: string | null
+          expires_at: string
+          id?: string
+          ip?: string | null
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_id?: string | null
+          expires_at?: string
+          id?: string
+          ip?: string | null
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       posts: {
         Row: {
@@ -517,6 +679,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_manage_setting: {
+        Args: { _key: string; _user_id: string }
+        Returns: boolean
+      }
+      has_panel_permission: {
+        Args: { _permission: string; _user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -525,7 +695,18 @@ export type Database = {
         Returns: boolean
       }
       is_team_member: { Args: { _user_id: string }; Returns: boolean }
+      is_verified_owner: { Args: { _user_id: string }; Returns: boolean }
       is_vip: { Args: { _user_id: string }; Returns: boolean }
+      panel_stats: { Args: { _days?: number }; Returns: Json }
+      panel_unlocked: { Args: { _user_id: string }; Returns: boolean }
+      set_admin_permission: {
+        Args: {
+          _enabled: boolean
+          _permission: string
+          _target_user_id: string
+        }
+        Returns: undefined
+      }
       set_admin_role: {
         Args: { _enabled: boolean; _target_user_id: string }
         Returns: undefined
