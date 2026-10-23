@@ -8,6 +8,20 @@
       "when": 1792683286466,
       "tag": "0000_seed_sample_security_posts",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792747276415,
+      "tag": "0001_owner_controls",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792747946174,
+      "tag": "0002_owner_panel_access_stats",
+      "breakpoints": true
     }
   ]
 }

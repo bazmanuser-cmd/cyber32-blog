@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_permissions: {
+        Row: {
+          created_at: string
+          granted_by: string | null
+          permission: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          granted_by?: string | null
+          permission: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          granted_by?: string | null
+          permission?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string
@@ -186,6 +207,147 @@ export type Database = {
           },
         ]
       }
+      page_views: {
+        Row: {
+          browser: string | null
+          country: string | null
+          created_at: string
+          device: string
+          id: string
+          path: string
+          referrer: string | null
+          user_id: string | null
+          visitor_hash: string
+        }
+        Insert: {
+          browser?: string | null
+          country?: string | null
+          created_at?: string
+          device?: string
+          id?: string
+          path: string
+          referrer?: string | null
+          user_id?: string | null
+          visitor_hash: string
+        }
+        Update: {
+          browser?: string | null
+          country?: string | null
+          created_at?: string
+          device?: string
+          id?: string
+          path?: string
+          referrer?: string | null
+          user_id?: string | null
+          visitor_hash?: string
+        }
+        Relationships: []
+      }
+      panel_access_config: {
+        Row: {
+          allowed_ips: string[]
+          apply_to_admins: boolean
+          enabled: boolean
+          id: number
+          lockout_minutes: number
+          max_failed_attempts: number
+          mode: string
+          unlock_minutes: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          allowed_ips?: string[]
+          apply_to_admins?: boolean
+          enabled?: boolean
+          id?: number
+          lockout_minutes?: number
+          max_failed_attempts?: number
+          mode?: string
+          unlock_minutes?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          allowed_ips?: string[]
+          apply_to_admins?: boolean
+          enabled?: boolean
+          id?: number
+          lockout_minutes?: number
+          max_failed_attempts?: number
+          mode?: string
+          unlock_minutes?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      panel_devices: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          last_ip: string | null
+          last_seen_at: string | null
+          status: string
+          token_hash: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label?: string
+          last_ip?: string | null
+          last_seen_at?: string | null
+          status?: string
+          token_hash: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          last_ip?: string | null
+          last_seen_at?: string | null
+          status?: string
+          token_hash?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      panel_unlocks: {
+        Row: {
+          created_at: string
+          device_id: string | null
+          expires_at: string
+          id: string
+          ip: string | null
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_id?: string | null
+          expires_at: string
+          id?: string
+          ip?: string | null
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_id?: string | null
+          expires_at?: string
+          id?: string
+          ip?: string | null
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
           author_id: string
@@ -318,9 +480,21 @@ export type Database = {
         Relationships: []
       }
       site_settings: {
-        Row: { key: string; value: Json; updated_at: string }
-        Insert: { key: string; value?: Json; updated_at?: string }
-        Update: { key?: string; value?: Json; updated_at?: string }
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
         Relationships: []
       }
       team_applications: {
@@ -505,6 +679,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+<<<<<<< HEAD
       get_my_post_analytics: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -515,6 +690,15 @@ export type Database = {
           title: string
           view_count: number
         }[]
+=======
+      can_manage_setting: {
+        Args: { _key: string; _user_id: string }
+        Returns: boolean
+      }
+      has_panel_permission: {
+        Args: { _permission: string; _user_id: string }
+        Returns: boolean
+>>>>>>> d55798b52390de9595e86b7c53d08df39cd0ccd9
       }
       has_role: {
         Args: {
@@ -524,8 +708,22 @@ export type Database = {
         Returns: boolean
       }
       is_team_member: { Args: { _user_id: string }; Returns: boolean }
+      is_verified_owner: { Args: { _user_id: string }; Returns: boolean }
       is_vip: { Args: { _user_id: string }; Returns: boolean }
-      set_admin_role: { Args: { _enabled: boolean; _target_user_id: string }; Returns: undefined }
+      panel_stats: { Args: { _days?: number }; Returns: Json }
+      panel_unlocked: { Args: { _user_id: string }; Returns: boolean }
+      set_admin_permission: {
+        Args: {
+          _enabled: boolean
+          _permission: string
+          _target_user_id: string
+        }
+        Returns: undefined
+      }
+      set_admin_role: {
+        Args: { _enabled: boolean; _target_user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "owner" | "admin" | "instructor" | "author" | "vip" | "user"
