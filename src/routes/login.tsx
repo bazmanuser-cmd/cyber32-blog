@@ -11,15 +11,15 @@ import { toast } from "sonner";
 import { Terminal, KeyRound, User } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    type: search.type === "team" || search.type === "owner" ? search.type : "user",
+  validateSearch: (search: Record<string, unknown>): { type?: "user" | "team" | "owner" } => ({
+    type: search.type === "team" || search.type === "owner" ? search.type : undefined,
   }),
   head: () => ({ meta: [{ title: "ورود | سایبر ۳۲" }, { name: "description", content: "ورود اعضا و کاربران سایبر ۳۲." }, { name: "robots", content: "noindex, nofollow" }] }),
   component: Login,
 });
 
 function Login() {
-  const { type } = Route.useSearch();
+  const { type = "user" } = Route.useSearch();
   const { signIn, user } = useAuth();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");

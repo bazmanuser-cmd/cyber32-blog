@@ -318,9 +318,21 @@ export type Database = {
         Relationships: []
       }
       site_settings: {
-        Row: { key: string; value: Json; updated_at: string }
-        Insert: { key: string; value?: Json; updated_at?: string }
-        Update: { key?: string; value?: Json; updated_at?: string }
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
         Relationships: []
       }
       team_applications: {
@@ -514,7 +526,10 @@ export type Database = {
       }
       is_team_member: { Args: { _user_id: string }; Returns: boolean }
       is_vip: { Args: { _user_id: string }; Returns: boolean }
-      set_admin_role: { Args: { _enabled: boolean; _target_user_id: string }; Returns: undefined }
+      set_admin_role: {
+        Args: { _enabled: boolean; _target_user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "owner" | "admin" | "instructor" | "author" | "vip" | "user"

@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/lib/auth";
 import { useRoles } from "@/lib/roles";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 import { KeyRound, ScrollText, Search, Settings2, Shield, UserPlus, Users } from "lucide-react";
 
@@ -90,7 +91,7 @@ function OwnerPanel() {
 
   const saveSetting = async (key: string, value: object) => {
     setBusy(true);
-    const { error } = await supabase.from("site_settings").upsert({ key, value });
+    const { error } = await supabase.from("site_settings").upsert({ key, value: value as Json });
     setBusy(false);
     if (error) toast.error("ذخیره تنظیمات انجام نشد: " + error.message);
     else toast.success("تنظیمات ذخیره شد");
