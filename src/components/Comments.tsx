@@ -84,7 +84,7 @@ export function Comments({ postId }: { postId: string }) {
       ) : (
         <Card className="p-5 mb-6 bg-card/40 border-primary/20 text-center">
           <p className="text-sm text-muted-foreground">
-            برای گذاشتن نظر <Link to="/login" className="text-primary font-mono hover:underline">وارد شوید</Link> یا <Link to="/register" className="text-primary font-mono hover:underline">ثبت‌نام</Link> کنید.
+            برای گذاشتن نظر <Link to="/login" search={{ type: "user" }} className="text-primary font-mono hover:underline">وارد شوید</Link> یا <Link to="/register" className="text-primary font-mono hover:underline">ثبت‌نام</Link> کنید.
           </p>
         </Card>
       )}

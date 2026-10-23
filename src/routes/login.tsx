@@ -125,7 +125,6 @@ function Login() {
             </div>
             <div className="mt-4 flex justify-center gap-4 text-xs">
               <Link to="/login" search={{ type: "team" }} className="text-muted-foreground hover:text-primary">ورود اعضای مجموعه</Link>
-              <Link to="/login" search={{ type: "owner" }} className="text-muted-foreground hover:text-primary">ورود مالک</Link>
             </div>
           </div>
         </Card>

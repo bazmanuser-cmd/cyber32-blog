@@ -49,7 +49,7 @@ function RegisterPage() {
         <p className="text-muted-foreground mt-4 leading-8">
           لینک فعال‌سازی به <span className="font-mono text-primary">{email}</span> ارسال شد. پس از تأیید، وارد شوید.
         </p>
-        <Link to="/login" className="inline-block mt-6 px-6 py-3 rounded-md bg-primary text-primary-foreground font-mono">ورود</Link>
+        <Link to="/login" search={{ type: "user" }} className="inline-block mt-6 px-6 py-3 rounded-md bg-primary text-primary-foreground font-mono">ورود</Link>
       </section>
     </Layout>
   );
@@ -105,7 +105,7 @@ function RegisterPage() {
             </form>
 
             <div className="mt-6 text-center text-sm text-muted-foreground">
-              حساب دارید؟ <Link to="/login" className="text-primary font-mono hover:underline">ورود</Link>
+              حساب دارید؟ <Link to="/login" search={{ type: "user" }} className="text-primary font-mono hover:underline">ورود</Link>
             </div>
             <p className="mt-4 text-xs text-muted-foreground text-center font-mono">
               عضو تیم هستید؟ برای دعوت‌نامه با <a href="https://t.me/ViRus32_Org" target="_blank" rel="noreferrer" className="text-primary hover:underline">@ViRus32_Org</a> در ارتباط باشید.

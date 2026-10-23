@@ -30,7 +30,7 @@ function ForgotPasswordPage() {
           نام کاربری‌تان را در پیام بنویسید؛ رمز عبور یا کد تأیید را برای هیچ‌کس ارسال نکنید.
         </p>
         <div className="mt-8 text-sm text-muted-foreground">
-          <Link to="/login" className="text-primary hover:underline font-mono">
+          <Link to="/login" search={{ type: "user" }} className="text-primary hover:underline font-mono">
             بازگشت به ورود
           </Link>
         </div>

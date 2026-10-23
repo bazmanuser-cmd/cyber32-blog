@@ -5,35 +5,51 @@ import { useAuth } from "@/lib/auth";
 import { useRoles } from "@/lib/roles";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
-import { LayoutDashboard, GraduationCap, HardDrive, FileText, Bell, Settings, Shield, CreditCard, Map, BookOpen, Crown } from "lucide-react";
+import { LayoutDashboard, GraduationCap, HardDrive, FileText, Bell, Settings, Shield, CreditCard, Map, BookOpen, Crown, Eye, MessageSquare, TrendingUp } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "پنل کاربری | سایبر ۳۲" }, { name: "robots", content: "noindex" }] }),
   component: DashboardPage,
 });
 
-type DashboardPost = { id: string; title: string; created_at: string; view_count: number };
+type DashboardPost = {
+  post_id: string;
+  title: string;
+  category: string | null;
+  created_at: string;
+  view_count: number;
+  comment_count: number;
+};
 
 function DashboardPage() {
   const { user, profile, loading } = useAuth();
   const { roles, isAdmin, isOwner } = useRoles();
   const [posts, setPosts] = useState<DashboardPost[]>([]);
   const [postsLoading, setPostsLoading] = useState(true);
+  const [postsError, setPostsError] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
-    supabase.from("posts").select("id,title,created_at,view_count").eq("author_id", user.id).order("created_at", { ascending: false }).limit(100)
-      .then(({ data }) => {
-        setPosts((data ?? []) as DashboardPost[]);
+    if (!user) {
         setPostsLoading(false);
-      });
+        return;
+    }
+    supabase.rpc("get_my_post_analytics").then(({ data, error }) => {
+      if (error) {
+        setPostsError(true);
+        toast.error("دریافت آمار محتوا انجام نشد.");
+      } else {
+        setPosts((data ?? []) as DashboardPost[]);
+      }
+      setPostsLoading(false);
+    });
   }, [user]);
 
   if (loading) return <Layout><div className="p-20 text-center font-mono text-muted-foreground">&gt; ...</div></Layout>;
   if (!user) return (
     <Layout><div className="max-w-md mx-auto p-14 text-center">
       <p className="text-muted-foreground">برای مشاهده پنل کاربری وارد شوید.</p>
-      <Link to="/login" className="text-primary font-mono mt-4 inline-block">ورود</Link>
+      <Link to="/login" search={{ type: "user" }} className="text-primary font-mono mt-4 inline-block">ورود</Link>
     </div></Layout>
   );
 
@@ -46,6 +62,9 @@ function DashboardPage() {
     { icon: Settings, title: "تنظیمات پروفایل", desc: "ویرایش اطلاعات و رمز", to: "/profile" as const },
     { icon: Shield, title: "امنیت حساب", desc: "رمز، ۲FA و لاگ فعالیت", to: "/security" as const },
   ];
+  const totalViews = posts.reduce((total, post) => total + post.view_count, 0);
+  const totalComments = posts.reduce((total, post) => total + post.comment_count, 0);
+  const averageViews = posts.length ? Math.round(totalViews / posts.length) : 0;
 
   return (
     <Layout>
@@ -68,18 +87,28 @@ function DashboardPage() {
         <section className="mt-8" aria-labelledby="my-post-stats">
           <div className="flex items-end justify-between gap-4 mb-3">
             <h2 id="my-post-stats" className="text-lg font-bold">آمار محتوای من</h2>
-            <span className="text-xs text-muted-foreground">نمایش جزئیات حداکثر ۱۰۰ پست اخیر</span>
+            <span className="text-xs text-muted-foreground">آمار کامل همه پست‌ها · به‌روزرسانی زنده</span>
           </div>
-          <div className="grid sm:grid-cols-2 gap-3 mb-4">
-            <Card className="p-4"><div className="text-xs text-muted-foreground">تعداد پست‌ها</div><div className="text-2xl font-mono font-bold mt-1">{postsLoading ? "..." : posts.length}</div></Card>
-            <Card className="p-4"><div className="text-xs text-muted-foreground">مجموع بازدید پست‌ها</div><div className="text-2xl font-mono font-bold mt-1">{postsLoading ? "..." : posts.reduce((total, post) => total + post.view_count, 0).toLocaleString("fa-IR")}</div></Card>
+          <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-3 mb-4">
+            <Card className="p-4"><FileText className="w-5 h-5 text-primary mb-3" /><div className="text-xs text-muted-foreground">مجموع پست‌ها</div><div className="text-2xl font-mono font-bold mt-1">{postsLoading ? "..." : posts.length.toLocaleString("fa-IR")}</div></Card>
+            <Card className="p-4"><Eye className="w-5 h-5 text-primary mb-3" /><div className="text-xs text-muted-foreground">مجموع بازدید</div><div className="text-2xl font-mono font-bold mt-1">{postsLoading ? "..." : totalViews.toLocaleString("fa-IR")}</div></Card>
+            <Card className="p-4"><MessageSquare className="w-5 h-5 text-primary mb-3" /><div className="text-xs text-muted-foreground">مجموع دیدگاه‌ها</div><div className="text-2xl font-mono font-bold mt-1">{postsLoading ? "..." : totalComments.toLocaleString("fa-IR")}</div></Card>
+            <Card className="p-4"><TrendingUp className="w-5 h-5 text-primary mb-3" /><div className="text-xs text-muted-foreground">میانگین بازدید هر پست</div><div className="text-2xl font-mono font-bold mt-1">{postsLoading ? "..." : averageViews.toLocaleString("fa-IR")}</div></Card>
           </div>
           <Card className="divide-y divide-border overflow-hidden">
-            {posts.map((post) => <div key={post.id} className="p-4 flex items-center justify-between gap-4">
-              <div className="min-w-0"><Link to="/post/$id" params={{ id: post.id }} className="font-medium truncate block hover:text-primary">{post.title}</Link><time className="text-xs text-muted-foreground">{new Date(post.created_at).toLocaleDateString("fa-IR")}</time></div>
+            {posts.map((post) => <div key={post.post_id} className="p-4 flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                <Link to="/post/$id" params={{ id: post.post_id }} className="font-medium truncate block hover:text-primary">{post.title}</Link>
+                <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                  <time>{new Date(post.created_at).toLocaleDateString("fa-IR")}</time>
+                  {post.category && <span>{post.category}</span>}
+                  <span>{post.comment_count.toLocaleString("fa-IR")} دیدگاه</span>
+                </div>
+              </div>
               <div className="text-sm font-mono whitespace-nowrap">{post.view_count.toLocaleString("fa-IR")} بازدید</div>
             </div>)}
-            {!postsLoading && posts.length === 0 && <p className="p-4 text-sm text-muted-foreground">هنوز پستی ندارید.</p>}
+            {!postsLoading && postsError && <p className="p-4 text-sm text-destructive">آمار محتوا در دسترس نیست؛ دوباره وارد شوید یا بعداً تلاش کنید.</p>}
+            {!postsLoading && !postsError && posts.length === 0 && <p className="p-4 text-sm text-muted-foreground">هنوز پستی ندارید.</p>}
           </Card>
         </section>
 

@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/lib/auth";
 import { useRoles } from "@/lib/roles";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 import { KeyRound, ScrollText, Search, Settings2, Shield, UserPlus, Users } from "lucide-react";
 
@@ -44,7 +45,7 @@ function OwnerPanel() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) navigate({ to: "/login" });
+    if (!loading && !user) navigate({ to: "/login", search: { type: "user" } });
     else if (!loading && user && !rolesLoading && !isAdmin) navigate({ to: "/dashboard" });
   }, [loading, user, rolesLoading, isAdmin, navigate]);
 
@@ -88,7 +89,7 @@ function OwnerPanel() {
     }
   };
 
-  const saveSetting = async (key: string, value: object) => {
+  const saveSetting = async (key: string, value: Json) => {
     setBusy(true);
     const { error } = await supabase.from("site_settings").upsert({ key, value });
     setBusy(false);

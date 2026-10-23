@@ -505,6 +505,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_my_post_analytics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          category: string | null
+          comment_count: number
+          created_at: string
+          post_id: string
+          title: string
+          view_count: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

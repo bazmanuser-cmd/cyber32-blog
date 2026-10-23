@@ -130,7 +130,7 @@ function Admin() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
-    if (!loading && !user) navigate({ to: "/login" });
+    if (!loading && !user) navigate({ to: "/login", search: { type: "user" } });
   }, [loading, user, navigate]);
 
   useEffect(() => {

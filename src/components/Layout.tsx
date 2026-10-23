@@ -43,7 +43,7 @@ export function Layout({ children }: { children: ReactNode }) {
             <Link to="/courses" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
               <GraduationCap className="w-4 h-4" /> دوره‌ها
             </Link>
-            <Link to="/articles" className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
+            <Link to="/articles" search={{ category: "" }} className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
               <FileText className="w-4 h-4" /> مقالات
             </Link>
             <Link to="/articles" search={{ category: "اخبار" }} className="px-3 py-2 rounded-md text-sm hover:bg-accent transition-colors flex items-center gap-2">
@@ -101,11 +101,21 @@ export function Layout({ children }: { children: ReactNode }) {
               </>
             ) : (
               <Button asChild variant="default" size="sm" className="font-mono">
-                <Link to="/login">ورود</Link>
+                <Link to="/login" search={{ type: "user" }}>ورود</Link>
               </Button>
             )}
           </div>
         </div>
+        <nav aria-label="ناوبری اصلی" className="md:hidden border-t border-border/50 overflow-x-auto">
+          <div className="flex w-max min-w-full items-center gap-1 px-3 py-2">
+            <Link to="/" className="px-3 py-2 rounded-md text-sm hover:bg-accent whitespace-nowrap">صفحه اصلی</Link>
+            <Link to="/articles" search={{ category: "" }} className="px-3 py-2 rounded-md text-sm hover:bg-accent whitespace-nowrap">مقالات</Link>
+            <Link to="/articles" search={{ category: "اخبار" }} className="px-3 py-2 rounded-md text-sm hover:bg-accent whitespace-nowrap">اخبار</Link>
+            <Link to="/register" className="px-3 py-2 rounded-md text-sm hover:bg-accent whitespace-nowrap">ثبت‌نام کاربران</Link>
+            <Link to="/login" search={{ type: "team" }} className="px-3 py-2 rounded-md text-sm hover:bg-accent whitespace-nowrap">ورود اعضای مجموعه</Link>
+            <Link to="/team" className="px-3 py-2 rounded-md text-sm hover:bg-accent whitespace-nowrap">درخواست عضویت تیم</Link>
+          </div>
+        </nav>
       </header>
 
       <main className="flex-1">{children}</main>
