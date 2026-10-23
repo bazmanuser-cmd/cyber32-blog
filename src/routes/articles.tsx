@@ -9,8 +9,8 @@ import { Input } from "@/components/ui/input";
 import { FileText, Search, Eye, Calendar } from "lucide-react";
 
 export const Route = createFileRoute("/articles")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    category: typeof search.category === "string" ? search.category : "",
+  validateSearch: (search: Record<string, unknown>): { category?: string } => ({
+    category: typeof search.category === "string" && search.category ? search.category : undefined,
   }),
   head: () => ({
     meta: [
