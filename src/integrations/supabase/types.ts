@@ -317,6 +317,54 @@ export type Database = {
         }
         Relationships: []
       }
+      site_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      team_applications: {
+        Row: {
+          answers: Json
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          status: string
+          username: string
+        }
+        Insert: {
+          answers?: Json
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          status?: string
+          username: string
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          status?: string
+          username?: string
+        }
+        Relationships: []
+      }
       team_members: {
         Row: {
           avatar_url: string | null
@@ -478,6 +526,10 @@ export type Database = {
       }
       is_team_member: { Args: { _user_id: string }; Returns: boolean }
       is_vip: { Args: { _user_id: string }; Returns: boolean }
+      set_admin_role: {
+        Args: { _enabled: boolean; _target_user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "owner" | "admin" | "instructor" | "author" | "vip" | "user"
